@@ -8,19 +8,10 @@ export function mapAuthUser(
 ): AuthUser {
   return {
     id: user.id,
-
-    username: user.email,
-
+    employeeCode: user.employeeCode,
+    username: user.username,
     email: user.email,
-
-    firstName: user.firstName,
-
-    lastName: user.lastName,
-
-    fullName: `${user.firstName} ${user.lastName}`,
-
     image: user.image,
-
     role: user.role,
   };
 }

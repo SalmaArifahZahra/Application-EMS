@@ -5,52 +5,34 @@ export type UserRole =
 
 export interface ApiUser {
   id: string;
-
+  employeeCode: string;
+  username: string;
   email: string;
-
   password: string;
-
-  firstName: string;
-
-  lastName: string;
-
   role: UserRole;
-
   image: string;
-
   isActive: boolean;
-
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuthUser {
   id: string;
-
+  employeeCode: string;
   username: string;
-
   email: string;
-
-  firstName: string;
-
-  lastName: string;
-
-  fullName: string;
-
   image: string;
-
   role: UserRole;
+  fullName?: string;
 }
 
 export interface LoginPayload {
   email: string;
-
   password: string;
 }
 
 export interface LoginResponse {
   success: boolean;
-
   message: string;
-
   user: AuthUser | null;
 }
