@@ -1,29 +1,22 @@
 export interface Employee {
   id: string;
-
   employeeCode: string;
-
+  nik: string;
   firstName: string;
-
   lastName: string;
-
-  email: string;
-
-  phone: string;
-
   gender: string;
-
+  birthPlace: string;
   birthDate: string;
-
+  email: string;
+  phone: string;
+  address: string;
   departmentCode: string;
-
-  position: string;
-
-  userEmail: string;
-
-  image: string;
-
+  positionCode: string;
+  userId: string;
+  basicSalary: number;
   status: string;
-
+  joinDate: string;
+  image: string;
   createdAt: string;
+  updatedAt: string;
 }

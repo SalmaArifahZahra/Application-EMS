@@ -14,12 +14,11 @@ export const employeeService = {
   },
 
     async create(
-        data: Partial<Employee>
+        data: Omit<Employee, "id" | "createdAt" | "updatedAt">
     ): Promise<Employee> {
-
         return apiClient.post<Employee>(
-        API.employees,
-        data
+          API.employees,
+          data as any
         );
     },
 

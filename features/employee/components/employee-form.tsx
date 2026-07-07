@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, forwardRef } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,12 +14,27 @@ import { Position } from "@/features/position/types";
 import { Department } from "@/features/department/types";
 import { departmentService } from "@/features/department/services/department-service";
 import { positionService } from "@/features/position/service/position-service";
-import {
-  validateEmployee,
-  type EmployeeFormErrors,
-} from "../helpers/employee-validation";
+import { useForm as useRHForm } from "react-hook-form";
 
-type EmployeeFormValues = Omit<Employee, "id" | "createdAt">;
+const employeeFormSchema = z.object({
+  employeeCode: z.string().min(1, "Employee Code is required"),
+  nik: z.string().min(1, "NIK is required"),
+  firstName: z.string().min(1, "First Name is required"),
+  lastName: z.string().min(1, "Last Name is required"),
+  email: z.string().email("Invalid email format"),
+  phone: z.string().min(1, "Phone Number is required"),
+  gender: z.string().min(1, "Gender is required"),
+  birthPlace: z.string().min(1, "Birth Place is required"),
+  birthDate: z.string().min(1, "Birth Date is required"),
+  address: z.string().min(1, "Address is required"),
+  departmentCode: z.string().min(1, "Department is required"),
+  positionCode: z.string().min(1, "Position is required"),
+  basicSalary: z.coerce.number().min(0, "Salary must be >= 0"),
+  image: z.string().optional().transform(v => v || ""),
+  status: z.string().min(1, "Status is required"),
+});
+
+type EmployeeFormValues = Omit<Employee, "id" | "createdAt" | "updatedAt" | "userId" | "joinDate">;
 
 interface EmployeeFormProps {
   initialValues?: EmployeeFormValues;
@@ -31,172 +49,137 @@ export function EmployeeForm({
 }: EmployeeFormProps) {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
+  const [imagePreview, setImagePreview] = useState<string | null>(initialValues?.image || null);
 
-  const [values, setValues] = useState<EmployeeFormValues>({
-    employeeCode: initialValues?.employeeCode ?? "",
-    firstName: initialValues?.firstName ?? "",
-    lastName: initialValues?.lastName ?? "",
-    email: initialValues?.email ?? "",
-    phone: initialValues?.phone ?? "",
-    gender: initialValues?.gender ?? "Male",
-    birthDate: initialValues?.birthDate ?? "",
-    departmentCode: initialValues?.departmentCode ?? "",
-    position: initialValues?.position ?? "",
-    userEmail: initialValues?.userEmail ?? "",
-    image: initialValues?.image ?? "",
-    status: initialValues?.status ?? "Active",
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useRHForm<z.infer<typeof employeeFormSchema>>({
+    resolver: zodResolver(employeeFormSchema) as any,
+    defaultValues: {
+      employeeCode: initialValues?.employeeCode ?? "",
+      nik: initialValues?.nik ?? "",
+      firstName: initialValues?.firstName ?? "",
+      lastName: initialValues?.lastName ?? "",
+      email: initialValues?.email ?? "",
+      phone: initialValues?.phone ?? "",
+      gender: initialValues?.gender ?? "Male",
+      birthPlace: initialValues?.birthPlace ?? "",
+      birthDate: initialValues?.birthDate ?? "",
+      address: initialValues?.address ?? "",
+      departmentCode: initialValues?.departmentCode ?? "",
+      positionCode: initialValues?.positionCode ?? "",
+      basicSalary: initialValues?.basicSalary ?? 0,
+      image: initialValues?.image ?? "",
+      status: initialValues?.status ?? "Active",
+    },
   });
 
-  const [errors, setErrors] = useState<EmployeeFormErrors>({});
-
-  // filteredPositions dipindahkan setelah state 'values' didefinisikan agar tidak ReferenceError
+  const departmentCode = watch("departmentCode");
   const filteredPositions = positions.filter(
-    (position) => position.departmentCode === values.departmentCode,
+    (pos) => pos.departmentCode === departmentCode,
   );
 
   useEffect(() => {
     async function loadMasterData() {
       const departmentData = await departmentService.getAll();
       const positionData = await positionService.getAll();
-
       setDepartments(departmentData);
       setPositions(positionData);
     }
-
     loadMasterData();
   }, []);
 
-  function handleChange(key: keyof EmployeeFormValues, value: string) {
-    setValues((previous) => {
-      if (key === "departmentCode") {
-        return {
-          ...previous,
-          departmentCode: value,
-          position: "",
-        };
-      }
+  const submitForm = async (data: z.infer<typeof employeeFormSchema>) => {
+    await onSubmit(data as EmployeeFormValues);
+  };
 
-      return {
-        ...previous,
-        [key]: value,
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setImagePreview(base64String);
+        setValue("image", base64String);
       };
-    });
-
-    setErrors((previous) => ({
-      ...previous,
-      [key]: "",
-    }));
-  }
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const validationErrors = validateEmployee(values);
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
+      reader.readAsDataURL(file);
     }
-
-    setErrors({});
-
-    await onSubmit({
-      ...values,
-      userEmail: values.email,
-    });
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit(submitForm as any)} className="space-y-6">
       <div className="grid gap-5 md:grid-cols-2">
-        <FormInput
-          label="Employee Code"
-          value={values.employeeCode}
-          onChange={(value) => handleChange("employeeCode", value)}
-        />
+        <FormInput label="Employee Code" {...register("employeeCode")} error={errors.employeeCode?.message} />
+        <FormInput label="NIK" {...register("nik" as any)} error={(errors as any).nik?.message} />
+        <FormInput label="First Name" {...register("firstName")} error={errors.firstName?.message} />
+        <FormInput label="Last Name" {...register("lastName")} error={errors.lastName?.message} />
+        <FormInput label="Email" type="email" {...register("email")} error={errors.email?.message} />
+        <FormInput label="Phone Number" {...register("phone")} error={errors.phone?.message} />
+        <FormInput label="Address" {...register("address")} error={errors.address?.message} />
+        <FormInput label="Basic Salary" type="number" {...register("basicSalary")} error={errors.basicSalary?.message} />
+        <FormInput label="Birth Place" {...register("birthPlace")} error={errors.birthPlace?.message} />
+        <FormInput label="Birth Date" type="date" {...register("birthDate")} error={errors.birthDate?.message} />
 
-        <FormInput
-          label="First Name"
-          value={values.firstName}
-          onChange={(value) => handleChange("firstName", value)}
-        />
+        <div className="space-y-2">
+          <Label>Gender</Label>
+          <select {...register("gender")} className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus-visible:border-[#0B1849] focus-visible:ring-1 focus-visible:ring-[#0B1849]">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+          {errors.gender && <p className="text-sm text-red-500">{errors.gender.message}</p>}
+        </div>
 
-        <FormInput
-          label="Last Name"
-          value={values.lastName}
-          onChange={(value) => handleChange("lastName", value)}
-        />
+        <div className="space-y-2">
+          <Label>Department</Label>
+          <select
+            {...register("departmentCode")}
+            onChange={(e) => {
+              register("departmentCode").onChange(e);
+              setValue("positionCode", "");
+            }}
+            className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus-visible:border-[#0B1849] focus-visible:ring-1 focus-visible:ring-[#0B1849]"
+          >
+            <option value="">Select Department</option>
+            {departments.map((dept) => (
+              <option key={dept.id} value={dept.code}>{dept.name}</option>
+            ))}
+          </select>
+          {errors.departmentCode && <p className="text-sm text-red-500">{errors.departmentCode.message}</p>}
+        </div>
 
-        <FormInput
-          label="Email"
-          type="email"
-          value={values.email}
-          onChange={(value) => handleChange("email", value)}
-          error={errors.email}
-        />
+        <div className="space-y-2">
+          <Label>Position</Label>
+          <select {...register("positionCode")} className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus-visible:border-[#0B1849] focus-visible:ring-1 focus-visible:ring-[#0B1849]">
+            <option value="">Select Position</option>
+            {filteredPositions.map((pos) => (
+              <option key={pos.id} value={pos.code}>{pos.name}</option>
+            ))}
+          </select>
+          {errors.positionCode && <p className="text-sm text-red-500">{errors.positionCode.message}</p>}
+        </div>
 
-        <FormInput
-          label="Phone Number"
-          value={values.phone}
-          onChange={(value) => handleChange("phone", value)}
-        />
+        <div className="space-y-2">
+          <Label>Status</Label>
+          <select {...register("status")} className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus-visible:border-[#0B1849] focus-visible:ring-1 focus-visible:ring-[#0B1849]">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+          {errors.status && <p className="text-sm text-red-500">{errors.status.message}</p>}
+        </div>
 
-        <FormInput
-          label="Birth Date"
-          type="date"
-          value={values.birthDate}
-          onChange={(value) => handleChange("birthDate", value)}
-        />
-
-        <FormSelect
-          label="Gender"
-          value={values.gender}
-          onChange={(value) => handleChange("gender", value)}
-          options={[
-            { label: "Male", value: "Male" },
-            { label: "Female", value: "Female" },
-          ]}
-        />
-
-        <FormSelect
-          label="Department"
-          value={values.departmentCode}
-          onChange={(value) => handleChange("departmentCode", value)}
-          options={departments.map((dept) => ({
-            label: dept.name, // Silakan sesuaikan properti nama jika berbeda (misal: dept.label)
-            value: dept.code, // Silakan sesuaikan properti kode jika berbeda (misal: dept.id)
-          }))}
-          placeholder="Select Department"
-          error={errors.departmentCode}
-        />
-
-        <FormSelect
-          label="Position"
-          value={values.position}
-          onChange={(value) => handleChange("position", value)}
-          options={filteredPositions.map((position) => ({
-            label: position.name,
-            value: position.name,
-          }))}
-          placeholder="Select Position"
-          error={errors.position} // Diubah dari errors.departmentCode menjadi errors.position
-        />
-
-        <FormInput
-          label="Image URL"
-          value={values.image}
-          onChange={(value) => handleChange("image", value)}
-        />
-
-        <FormSelect
-          label="Status"
-          value={values.status}
-          onChange={(value) => handleChange("status", value)}
-          options={[
-            { label: "Active", value: "Active" },
-            { label: "Inactive", value: "Inactive" },
-          ]}
-        />
+        <div className="space-y-2">
+          <Label>Photo Profile</Label>
+          <Input type="file" accept="image/*" onChange={handleImageChange} />
+          {imagePreview && (
+            <div className="mt-2">
+              <img src={imagePreview} alt="Preview" className="h-24 w-24 rounded-full object-cover border" />
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-end">
@@ -208,80 +191,13 @@ export function EmployeeForm({
   );
 }
 
-interface FormInputProps {
-  label: string;
-  value: string;
-  onChange(value: string): void;
-  type?: string;
-  placeholder?: string;
-  error?: string;
-}
-
-function FormInput({
-  label,
-  value,
-  onChange,
-  type = "text",
-  placeholder,
-  error,
-}: FormInputProps) {
-  return (
+const FormInput = React.forwardRef<HTMLInputElement, { label: string; error?: string } & React.InputHTMLAttributes<HTMLInputElement>>(
+  ({ label, error, ...props }, ref) => (
     <div className="space-y-2">
       <Label>{label}</Label>
-
-      <Input
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={(event) => onChange(event.target.value)}
-      />
-
+      <Input ref={ref} {...props} />
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
-  );
-}
-
-interface SelectOption {
-  label: string;
-  value: string;
-}
-
-interface FormSelectProps {
-  label: string;
-  value: string;
-  options: SelectOption[];
-  onChange(value: string): void;
-  placeholder?: string;
-  error?: string;
-}
-
-function FormSelect({
-  label,
-  value,
-  options,
-  onChange,
-  placeholder = "Select Option",
-  error,
-}: FormSelectProps) {
-  return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-      >
-        <option value="">{placeholder}</option>
-
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-
-      {error && <p className="text-sm text-red-500">{error}</p>}
-    </div>
-  );
-}
+  )
+);
+FormInput.displayName = "FormInput";
