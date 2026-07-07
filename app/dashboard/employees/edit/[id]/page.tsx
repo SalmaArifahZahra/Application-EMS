@@ -9,6 +9,8 @@ import {
   useParams,
   useRouter,
 } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 
@@ -18,30 +20,19 @@ import { employeeService } from "@/features/employee/services/employee-service";
 
 import type { Employee } from "@/features/employee/types";
 
-type EmployeePayload = Omit<
-  Employee,
-  "id" | "createdAt"
->;
+type EmployeeFormValues = Omit<Employee, "id" | "createdAt" | "updatedAt" | "userId" | "joinDate">;
 
 export default function EditEmployeePage() {
   const params = useParams();
-
   const router = useRouter();
 
-  const [employee, setEmployee] =
-    useState<Employee>();
-
-  const [loading, setLoading] =
-    useState(true);
+  const [employee, setEmployee] = useState<Employee>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchEmployee() {
       try {
-        const result =
-          await employeeService.getById(
-            params.id as string,
-          );
-
+        const result = await employeeService.getById(params.id as string);
         setEmployee(result);
       } finally {
         setLoading(false);
@@ -51,19 +42,15 @@ export default function EditEmployeePage() {
     fetchEmployee();
   }, [params.id]);
 
-  async function handleUpdate(
-    values: EmployeePayload,
-  ) {
+  async function handleUpdate(values: EmployeeFormValues) {
     if (!employee) return;
 
-    await employeeService.update(
-      employee.id,
-      values,
-    );
+    await employeeService.update(employee.id, {
+      ...values,
+      userId: employee.userId, // preserve user id
+    });
 
-    router.push(
-      "/dashboard/employees",
-    );
+    router.push("/dashboard/employees");
   }
 
   if (loading) {
@@ -76,6 +63,11 @@ export default function EditEmployeePage() {
 
   return (
     <>
+      <Link href="/dashboard/employees" className="mb-4 inline-flex items-center text-sm text-slate-500 hover:text-slate-800">
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back to Employees
+      </Link>
+      
       <PageHeader
         title="Edit Employee"
         description="Update employee information."
@@ -83,38 +75,21 @@ export default function EditEmployeePage() {
 
       <EmployeeForm
         initialValues={{
-          employeeCode:
-            employee.employeeCode,
-
-          firstName:
-            employee.firstName,
-
-          lastName:
-            employee.lastName,
-
+          employeeCode: employee.employeeCode,
+          nik: employee.nik,
+          firstName: employee.firstName,
+          lastName: employee.lastName,
           email: employee.email,
-
           phone: employee.phone,
-
-          gender:
-            employee.gender,
-
-          birthDate:
-            employee.birthDate,
-
-          departmentCode:
-            employee.departmentCode,
-
-          position:
-            employee.position,
-
-          userEmail:
-            employee.userEmail,
-
+          gender: employee.gender,
+          birthPlace: employee.birthPlace,
+          birthDate: employee.birthDate,
+          address: employee.address,
+          departmentCode: employee.departmentCode,
+          positionCode: employee.positionCode,
+          basicSalary: employee.basicSalary,
           image: employee.image,
-
-          status:
-            employee.status,
+          status: employee.status,
         }}
         onSubmit={handleUpdate}
       />

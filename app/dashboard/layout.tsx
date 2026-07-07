@@ -1,6 +1,7 @@
 import { ProtectedRoute } from "@/features/auth/components/protected-route";
 import { DashboardHeader } from "@/features/dashboard/components/dashboard-header";
 import { DashboardSidebar } from "@/features/dashboard/components/dashboard-sidebar";
+import { SidebarProvider } from "@/features/dashboard/contexts/sidebar-context";
 
 export default function DashboardLayout({
   children,
@@ -9,17 +10,19 @@ export default function DashboardLayout({
 }) {
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen bg-slate-100">
-        <DashboardSidebar />
+      <SidebarProvider>
+        <div className="flex h-screen w-full overflow-hidden bg-[#EBEDE3]">
+          <DashboardSidebar />
 
-        <div className="flex flex-1 flex-col">
-          <DashboardHeader />
+          <div className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+            <DashboardHeader />
 
-          <main className="flex-1 p-6">
-            {children}
-          </main>
+            <main className="flex-1 p-4 md:p-6 lg:p-8">
+              {children}
+            </main>
+          </div>
         </div>
-      </div>
+      </SidebarProvider>
     </ProtectedRoute>
   );
 }

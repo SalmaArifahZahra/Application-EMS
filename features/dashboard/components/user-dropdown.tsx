@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -21,9 +21,10 @@ export function UserDropdown() {
   const { user, logout } = useAuth();
 
   function handleLogout() {
-    logout();
-
-    router.replace("/login");
+    if (window.confirm("Apakah anda ingin lanjut keluar?")) {
+      logout();
+      router.replace("/login");
+    }
   }
 
   if (!user) {
@@ -33,15 +34,15 @@ export function UserDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <button className="flex items-center gap-3 rounded-full transition hover:opacity-80">
+        <div className="flex items-center gap-3 rounded-full transition hover:opacity-80 cursor-pointer">
           <Image
-            src={user.image}
-            alt={user.fullName}
+            src={user.image || "/images/avatar.jpeg"}
+            alt={user.fullName || user.username || "User Avatar"}
             width={40}
             height={40}
             className="rounded-full"
           />
-        </button>
+        </div>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
@@ -64,16 +65,9 @@ export function UserDropdown() {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
           <User className="mr-2 h-4 w-4" />
-
           Profile
-        </DropdownMenuItem>
-
-        <DropdownMenuItem>
-          <Settings className="mr-2 h-4 w-4" />
-
-          Settings
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
