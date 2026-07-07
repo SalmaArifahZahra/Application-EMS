@@ -1,5 +1,3 @@
-import { getUserRole } from "../role-mapper";
-
 import type {
   ApiUser,
   AuthUser,
@@ -10,12 +8,19 @@ export function mapAuthUser(
 ): AuthUser {
   return {
     id: user.id,
-    username: user.username,
+
+    username: user.email,
+
     email: user.email,
+
     firstName: user.firstName,
+
     lastName: user.lastName,
+
     fullName: `${user.firstName} ${user.lastName}`,
+
     image: user.image,
-    role: getUserRole(user.id),
+
+    role: user.role,
   };
 }

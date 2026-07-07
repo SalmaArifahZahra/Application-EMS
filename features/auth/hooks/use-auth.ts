@@ -3,34 +3,33 @@
 import { useAuthStore } from "../store/auth-store";
 
 export function useAuth() {
-  const user =
-    useAuthStore(
-      (state) => state.user,
-    );
+  const user = useAuthStore((state) => state.user);
 
-  const isAuthenticated =
-    useAuthStore(
-      (state) =>
-        state.isAuthenticated,
-    );
+  const hydrated = useAuthStore(
+    (state) => state.hydrated,
+  );
 
-  const login =
-    useAuthStore(
-      (state) => state.login,
-    );
+  const login = useAuthStore(
+    (state) => state.login,
+  );
 
-  const logout =
-    useAuthStore(
-      (state) => state.logout,
-    );
+  const logout = useAuthStore(
+    (state) => state.logout,
+  );
+
+  const setUser = useAuthStore(
+    (state) => state.setUser,
+  );
 
   return {
     user,
 
-    isAuthenticated,
+    hydrated,
 
     login,
 
     logout,
+
+    setUser,
   };
 }

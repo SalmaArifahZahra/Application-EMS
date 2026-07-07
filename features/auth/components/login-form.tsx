@@ -17,17 +17,13 @@ import { LoginAnimation } from "@/features/auth/components/login-animation";
 import { AUTH_MESSAGES, DASHBOARD_ROUTES } from "@/features/auth/constants";
 
 export function LoginForm() {
+
   const router = useRouter();
   const { login } = useAuth();
-
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -51,6 +47,7 @@ export function LoginForm() {
       });
 
       if (!response.success || !response.user) {
+        
         setError(response.message);
 
         return;

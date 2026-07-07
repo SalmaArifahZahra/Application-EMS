@@ -1,7 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-
 import { persist } from "zustand/middleware";
 
 import type { AuthUser } from "../types";
@@ -9,11 +8,15 @@ import type { AuthUser } from "../types";
 interface AuthState {
   user: AuthUser | null;
 
-  isAuthenticated: boolean;
+  hydrated: boolean;
 
-  login: (user: AuthUser) => void;
+  login(user: AuthUser): void;
 
-  logout: () => void;
+  logout(): void;
+
+  setUser(user: AuthUser | null): void;
+
+  setHydrated(state: boolean): void;
 }
 
 export const useAuthStore =
@@ -24,22 +27,41 @@ export const useAuthStore =
 
         isAuthenticated: false,
 
-        login: (user) =>
+        hydrated: false,
+
+        login(user) {
           set({
             user,
+          });
+        },
+      logout() {
+        set({
+          user: null,
 
-            isAuthenticated: true,
-          }),
+          hydrated: true,
+        });
+      },
 
-        logout: () =>
+        setUser(user) {
           set({
-            user: null,
+            user,
+          });
+        },
 
-            isAuthenticated: false,
-          }),
+        setHydrated(state) {
+          set({
+            hydrated: state,
+          });
+        },
       }),
       {
         name: "ems-auth",
+
+        onRehydrateStorage: () => {
+          return (state) => {
+            state?.setHydrated(true);
+          };
+        },
       },
     ),
   );
