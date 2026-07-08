@@ -162,6 +162,15 @@ export default function PositionsPage() {
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Status <ChevronsUpDown size={14} /></div>
                 </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Description <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Created At <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Updated At <ChevronsUpDown size={14} /></div>
+                </th>
                 <th className="py-4 px-2 text-center font-medium text-slate-400">
                   <div className="flex items-center justify-center gap-1 cursor-pointer hover:text-slate-600">Action <ChevronsUpDown size={14} /></div>
                 </th>
@@ -182,6 +191,13 @@ export default function PositionsPage() {
                     }`}>
                       {pos.isActive ? "Active" : "Inactive"}
                     </span>
+                  </td>
+                  <td className="py-3 px-2 text-slate-500 truncate max-w-xs">{pos.description || "-"}</td>
+                  <td className="py-3 px-2 text-slate-500">
+                    {new Date(pos.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </td>
+                  <td className="py-3 px-2 text-slate-500">
+                    {new Date(pos.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
                   <td className="py-3 px-2 text-center">
                     <DropdownMenu>

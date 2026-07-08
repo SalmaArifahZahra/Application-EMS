@@ -3,9 +3,11 @@
 import { UserDropdown } from "./user-dropdown";
 import { Menu } from "lucide-react";
 import { useSidebar } from "../contexts/sidebar-context";
+import { usePathname } from "next/navigation";
 
 export function DashboardHeader() {
   const { toggle } = useSidebar();
+  const pathname = usePathname();
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between bg-white px-6 shadow-sm">
@@ -16,9 +18,11 @@ export function DashboardHeader() {
         >
           <Menu size={24} />
         </button>
-        <h1 className="text-xl font-bold text-slate-800">
-          Dashboard
-        </h1>
+        {pathname === "/dashboard" && (
+          <h1 className="text-xl font-bold text-slate-800">
+            Dashboard
+          </h1>
+        )}
       </div>
 
       <UserDropdown />

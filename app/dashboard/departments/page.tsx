@@ -158,6 +158,15 @@ export default function DepartmentsPage() {
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Manager Code <ChevronsUpDown size={14} /></div>
                 </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Status <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Created At <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Updated At <ChevronsUpDown size={14} /></div>
+                </th>
                 <th className="py-4 px-2 text-center font-medium text-slate-400">
                   <div className="flex items-center justify-center gap-1 cursor-pointer hover:text-slate-600">Action <ChevronsUpDown size={14} /></div>
                 </th>
@@ -170,6 +179,21 @@ export default function DepartmentsPage() {
                   <td className="py-3 px-2 text-slate-600">{dept.name}</td>
                   <td className="py-3 px-2 text-slate-500">{dept.description}</td>
                   <td className="py-3 px-2 text-slate-500">{dept.managerEmployeeCode || "-"}</td>
+                  <td className="py-3 px-2">
+                    <span className={`inline-flex items-center justify-center px-3 py-1 text-xs font-semibold rounded-full ${
+                      dept.isActive 
+                        ? "bg-green-100 text-green-600" 
+                        : "bg-red-100 text-red-500"
+                    }`}>
+                      {dept.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="py-3 px-2 text-slate-500">
+                    {new Date(dept.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </td>
+                  <td className="py-3 px-2 text-slate-500">
+                    {new Date(dept.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </td>
                   <td className="py-3 px-2 text-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors mx-auto">

@@ -130,10 +130,28 @@ export default function EmployeePage() {
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Profile <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Employee Name <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Employee ID <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">NIK <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Email <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Phone <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Gender <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Birth Info <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Department <ChevronsUpDown size={14} /></div>
@@ -143,6 +161,12 @@ export default function EmployeePage() {
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Salary <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Join Date <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Updated At <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Status <ChevronsUpDown size={14} /></div>
@@ -156,21 +180,32 @@ export default function EmployeePage() {
               {paginatedEmployees.map((emp) => (
                 <tr key={emp.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
                   <td className="py-3 px-2">
-                    <div className="flex items-center gap-3">
-                      <Image
-                        src={emp.image}
-                        alt={emp.firstName}
-                        width={36}
-                        height={36}
-                        className="rounded-full object-cover border border-slate-200"
-                      />
-                      <span className="font-semibold text-slate-800">{emp.firstName} {emp.lastName}</span>
-                    </div>
+                    <Image
+                      src={emp.image}
+                      alt={emp.firstName}
+                      width={36}
+                      height={36}
+                      className="rounded-full object-cover aspect-square border border-slate-200"
+                    />
+                  </td>
+                  <td className="py-3 px-2">
+                    <span className="font-semibold text-slate-800">{emp.firstName} {emp.lastName}</span>
                   </td>
                   <td className="py-3 px-2 text-slate-500 font-medium">#{emp.employeeCode}</td>
+                  <td className="py-3 px-2 text-slate-500">{emp.nik}</td>
+                  <td className="py-3 px-2 text-slate-500">{emp.email}</td>
+                  <td className="py-3 px-2 text-slate-500">{emp.phone}</td>
+                  <td className="py-3 px-2 text-slate-500">{emp.gender}</td>
+                  <td className="py-3 px-2 text-slate-500">{emp.birthPlace}, {emp.birthDate}</td>
                   <td className="py-3 px-2 text-slate-500">{emp.departmentCode}</td>
                   <td className="py-3 px-2 text-slate-500">{emp.positionCode}</td>
                   <td className="py-3 px-2 text-slate-500">Rp {new Intl.NumberFormat("id-ID").format(emp.basicSalary)}</td>
+                  <td className="py-3 px-2 text-slate-500">
+                    {new Date(emp.joinDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </td>
+                  <td className="py-3 px-2 text-slate-500">
+                    {new Date(emp.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </td>
                   <td className="py-3 px-2">
                     <span className={`inline-flex items-center justify-center px-3 py-1 text-xs font-semibold rounded-full ${
                       emp.status === "Active" 
