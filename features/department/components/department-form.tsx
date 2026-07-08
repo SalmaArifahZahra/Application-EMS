@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Department } from "../types";
+import { toast } from "sonner";
 
 type DepartmentFormValues = Omit<Department, "id" | "createdAt" | "updatedAt">;
 
@@ -35,7 +36,10 @@ export function DepartmentForm({ initialValues, loading = false, onSubmit }: Dep
     
     const newErrors: typeof errors = {};
     if (!values.code.trim()) newErrors.code = "Code is required";
+    else if (!/^[A-Za-z0-9-]+$/.test(values.code)) newErrors.code = "Only letters, numbers, and hyphens allowed";
+    
     if (!values.name.trim()) newErrors.name = "Name is required";
+    else if (!/^[a-zA-Z0-9\s]+$/.test(values.name)) newErrors.name = "Name must contain only letters and numbers";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -51,13 +55,21 @@ export function DepartmentForm({ initialValues, loading = false, onSubmit }: Dep
         <FormInput
           label="Code"
           value={values.code}
-          onChange={(v) => handleChange("code", v)}
+          onChange={(v) => {
+            const filtered = v.replace(/[^A-Za-z0-9-]/g, '');
+            if (v !== filtered) toast.warning("Code must contain only letters, numbers, and hyphens");
+            handleChange("code", filtered);
+          }}
           error={errors.code}
         />
         <FormInput
           label="Name"
           value={values.name}
-          onChange={(v) => handleChange("name", v)}
+          onChange={(v) => {
+            const filtered = v.replace(/[^a-zA-Z0-9\s]/g, '');
+            if (v !== filtered) toast.warning("Name must contain only letters and numbers");
+            handleChange("name", filtered);
+          }}
           error={errors.name}
         />
         <FormInput

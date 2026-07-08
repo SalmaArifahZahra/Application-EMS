@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Position } from "../types";
 import { Department } from "@/features/department/types";
 import { departmentService } from "@/features/department/services/department-service";
+import { toast } from "sonner";
 
 type PositionFormValues = Omit<Position, "id" | "createdAt" | "updatedAt">;
 
@@ -49,7 +50,11 @@ export function PositionForm({ initialValues, loading = false, onSubmit }: Posit
     
     const newErrors: typeof errors = {};
     if (!values.code.trim()) newErrors.code = "Code is required";
+    else if (!/^[A-Za-z0-9-]+$/.test(values.code)) newErrors.code = "Only letters, numbers, and hyphens allowed";
+    
     if (!values.name.trim()) newErrors.name = "Name is required";
+    else if (!/^[a-zA-Z0-9\s]+$/.test(values.name)) newErrors.name = "Name must contain only letters and numbers";
+    
     if (!values.departmentCode.trim()) newErrors.departmentCode = "Department is required";
 
     if (Object.keys(newErrors).length > 0) {
@@ -70,13 +75,21 @@ export function PositionForm({ initialValues, loading = false, onSubmit }: Posit
         <FormInput
           label="Code"
           value={values.code}
-          onChange={(v) => handleChange("code", v)}
+          onChange={(v) => {
+            const filtered = v.replace(/[^A-Za-z0-9-]/g, '');
+            if (v !== filtered) toast.warning("Code must contain only letters, numbers, and hyphens");
+            handleChange("code", filtered);
+          }}
           error={errors.code}
         />
         <FormInput
           label="Name"
           value={values.name}
-          onChange={(v) => handleChange("name", v)}
+          onChange={(v) => {
+            const filtered = v.replace(/[^a-zA-Z0-9\s]/g, '');
+            if (v !== filtered) toast.warning("Name must contain only letters and numbers");
+            handleChange("name", filtered);
+          }}
           error={errors.name}
         />
         <div className="space-y-2">

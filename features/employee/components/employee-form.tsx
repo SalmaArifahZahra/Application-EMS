@@ -8,6 +8,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 import type { Employee } from "../types";
 import { Position } from "@/features/position/types";
@@ -17,14 +18,23 @@ import { positionService } from "@/features/position/service/position-service";
 import { useForm as useRHForm } from "react-hook-form";
 
 const employeeFormSchema = z.object({
-  employeeCode: z.string().min(1, "Employee Code is required"),
-  nik: z.string().min(1, "NIK is required"),
-  firstName: z.string().min(1, "First Name is required"),
-  lastName: z.string().min(1, "Last Name is required"),
-  email: z.string().email("Invalid email format"),
-  phone: z.string().min(1, "Phone Number is required"),
+  employeeCode: z.string().min(1, "Employee Code is required").regex(/^[A-Za-z0-9-]+$/, "Only letters, numbers, and hyphens are allowed"),
+  nik: z.string()
+    .length(16, "NIK must be exactly 16 digits")
+    .regex(/^\d+$/, "NIK must contain only numbers"),
+  firstName: z.string()
+    .min(1, "First Name is required")
+    .regex(/^[a-zA-Z\s]+$/, "First Name must contain only letters"),
+  lastName: z.string()
+    .min(1, "Last Name is required")
+    .regex(/^[a-zA-Z\s]+$/, "Last Name must contain only letters"),
+  email: z.string().min(1, "Email is required").email("Invalid email format"),
+  phone: z.string()
+    .min(10, "Phone number is too short")
+    .max(15, "Phone number is too long")
+    .regex(/^\d+$/, "Phone Number must contain only numbers"),
   gender: z.string().min(1, "Gender is required"),
-  birthPlace: z.string().min(1, "Birth Place is required"),
+  birthPlace: z.string().min(1, "Birth Place is required").regex(/^[a-zA-Z\s]+$/, "Birth Place must contain only letters"),
   birthDate: z.string().min(1, "Birth Date is required"),
   address: z.string().min(1, "Address is required"),
   departmentCode: z.string().min(1, "Department is required"),
@@ -73,7 +83,7 @@ export function EmployeeForm({
       address: initialValues?.address ?? "",
       departmentCode: initialValues?.departmentCode ?? "",
       positionCode: initialValues?.positionCode ?? "",
-      basicSalary: initialValues?.basicSalary ?? 0,
+      basicSalary: initialValues?.basicSalary ?? ("" as any),
       image: initialValues?.image ?? "",
       status: initialValues?.status ?? "Active",
     },
@@ -119,15 +129,94 @@ export function EmployeeForm({
   return (
     <form onSubmit={handleSubmit(submitForm as any)} className="space-y-6">
       <div className="grid gap-5 md:grid-cols-2">
-        <FormInput label="Employee Code" {...register("employeeCode")} error={errors.employeeCode?.message} />
-        <FormInput label="NIK" {...register("nik" as any)} error={(errors as any).nik?.message} />
-        <FormInput label="First Name" {...register("firstName")} error={errors.firstName?.message} />
-        <FormInput label="Last Name" {...register("lastName")} error={errors.lastName?.message} />
+        <FormInput 
+          label="Employee Code" 
+          {...register("employeeCode", {
+            onChange: (e) => {
+              const val = e.target.value;
+              const filtered = val.replace(/[^A-Za-z0-9-]/g, '');
+              if (val !== filtered) toast.warning("Only letters, numbers, and hyphens allowed");
+              e.target.value = filtered;
+            }
+          })} 
+          error={errors.employeeCode?.message} 
+        />
+        <FormInput 
+          label="NIK" 
+          {...register("nik", {
+            onChange: (e) => {
+              const val = e.target.value;
+              const filtered = val.replace(/\D/g, '').slice(0, 16);
+              if (val !== filtered && val !== "") toast.warning("NIK must contain only numbers (max 16)");
+              e.target.value = filtered;
+            }
+          })} 
+          error={errors.nik?.message} 
+          maxLength={16}
+        />
+        <FormInput 
+          label="First Name" 
+          {...register("firstName", {
+            onChange: (e) => {
+              const val = e.target.value;
+              const filtered = val.replace(/[^a-zA-Z\s]/g, '');
+              if (val !== filtered) toast.warning("First Name must contain only letters");
+              e.target.value = filtered;
+            }
+          })} 
+          error={errors.firstName?.message} 
+        />
+        <FormInput 
+          label="Last Name" 
+          {...register("lastName", {
+            onChange: (e) => {
+              const val = e.target.value;
+              const filtered = val.replace(/[^a-zA-Z\s]/g, '');
+              if (val !== filtered) toast.warning("Last Name must contain only letters");
+              e.target.value = filtered;
+            }
+          })} 
+          error={errors.lastName?.message} 
+        />
         <FormInput label="Email" type="email" {...register("email")} error={errors.email?.message} />
-        <FormInput label="Phone Number" {...register("phone")} error={errors.phone?.message} />
+        <FormInput 
+          label="Phone Number" 
+          {...register("phone", {
+            onChange: (e) => {
+              const val = e.target.value;
+              const filtered = val.replace(/\D/g, '').slice(0, 15);
+              if (val !== filtered && val !== "") toast.warning("Phone Number must contain only numbers");
+              e.target.value = filtered;
+            }
+          })} 
+          error={errors.phone?.message}
+          maxLength={15}
+        />
         <FormInput label="Address" {...register("address")} error={errors.address?.message} />
-        <FormInput label="Basic Salary" type="number" {...register("basicSalary")} error={errors.basicSalary?.message} />
-        <FormInput label="Birth Place" {...register("birthPlace")} error={errors.birthPlace?.message} />
+        <FormInput 
+          label="Basic Salary" 
+          {...register("basicSalary", {
+            onChange: (e) => {
+              const val = e.target.value;
+              const filtered = val.replace(/\D/g, '');
+              if (val !== filtered && val !== "") toast.warning("Basic Salary must contain only numbers");
+              e.target.value = filtered;
+            }
+          })} 
+          error={errors.basicSalary?.message} 
+        />
+        <FormInput 
+          label="Birth Place" 
+          {...register("birthPlace", {
+            onChange: (e) => {
+              const val = e.target.value;
+              const filtered = val.replace(/[^a-zA-Z\s]/g, '');
+              if (val !== filtered) toast.warning("Birth Place must contain only letters");
+              e.target.value = filtered;
+            }
+          })} 
+          error={errors.birthPlace?.message} 
+        />
         <FormInput label="Birth Date" type="date" {...register("birthDate")} error={errors.birthDate?.message} />
 
         <div className="space-y-2">
