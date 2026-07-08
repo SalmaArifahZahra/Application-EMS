@@ -14,11 +14,29 @@ export const userService = {
     return apiClient.post<ApiUser>(API.users, data);
   },
 
-  async update(id: string, data: Partial<ApiUser>): Promise<ApiUser> {
-    return apiClient.put<ApiUser>(`${API.users}/${id}`, data);
+  async update(
+    id: string,
+    data: Partial<ApiUser>,
+  ): Promise<ApiUser> {
+    return apiClient.put<ApiUser>(
+      `${API.users}/${id}`,
+      data,
+    );
   },
 
   async delete(id: string): Promise<void> {
     await apiClient.delete(`${API.users}/${id}`);
+  },
+
+  async changePassword(
+    id: string,
+    password: string,
+  ): Promise<ApiUser> {
+    return apiClient.put<ApiUser>(
+      `${API.users}/${id}`,
+      {
+        password,
+      },
+    );
   },
 };
