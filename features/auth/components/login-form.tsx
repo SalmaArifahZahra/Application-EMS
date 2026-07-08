@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { Eye, EyeOff } from "lucide-react";
@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { LoginAnimation } from "@/features/auth/components/login-animation";
 import { AUTH_MESSAGES, DASHBOARD_ROUTES } from "@/features/auth/constants";
 
+
 export function LoginForm() {
 
   const router = useRouter();
@@ -25,6 +26,18 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith("ems_v2_") || key.startsWith("ems_v3_")) {
+          localStorage.removeItem(key);
+        }
+      });
+    }
+  }, []);
+
+
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,7 +60,7 @@ export function LoginForm() {
       });
 
       if (!response.success || !response.user) {
-        
+
         setError(response.message);
 
         return;

@@ -76,7 +76,7 @@ export function ProtectedRoute({
           onClick={() => router.replace("/dashboard")}
           className="rounded-full bg-blue-950 px-6 py-2 text-white transition hover:bg-amber-950"
         >
-          Kembali ke Dashboard
+          Back to Dashboard
         </button>
       </div>
     );
