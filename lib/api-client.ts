@@ -28,7 +28,6 @@ function getLocalData<T>(entity: string): T[] {
   if (stored) {
     return JSON.parse(stored) as T[];
   }
-  // Seed initial data
   const seed = SEED_DATA[entity] || [];
   localStorage.setItem(`ems_v2_${entity}`, JSON.stringify(seed));
   return seed as unknown as T[];
@@ -51,8 +50,7 @@ export const apiClient = {
     await delay();
     const entity = getEntityName(url);
     const data = getLocalData<T & { id: string }>(entity);
-    
-    // Check if getting by ID
+
     const match = url.match(/\/([^\/]+)$/);
     if (match && match[1] && !["users", "departments", "positions", "employees"].includes(match[1])) {
       const id = match[1];
@@ -60,7 +58,7 @@ export const apiClient = {
       if (!item) throw new Error("Not found");
       return item as unknown as T;
     }
-    
+
     return data as unknown as T;
   },
 
@@ -84,14 +82,14 @@ export const apiClient = {
     await delay();
     const entity = getEntityName(url);
     const data = getLocalData<T & { id: string }>(entity);
-    
+
     const match = url.match(/\/([^\/]+)$/);
     if (!match || !match[1]) throw new Error("ID not provided");
     const id = match[1];
-    
+
     const index = data.findIndex((d) => d.id === id);
     if (index === -1) throw new Error("Not found");
-    
+
     const updatedItem = { ...data[index], ...body, updatedAt: new Date().toISOString() } as unknown as T & { id: string };
     data[index] = updatedItem;
     saveLocalData(entity, data);
@@ -102,14 +100,14 @@ export const apiClient = {
     await delay();
     const entity = getEntityName(url);
     const data = getLocalData<T & { id: string }>(entity);
-    
+
     const match = url.match(/\/([^\/]+)$/);
     if (!match || !match[1]) throw new Error("ID not provided");
     const id = match[1];
-    
+
     const index = data.findIndex((d) => d.id === id);
     if (index === -1) throw new Error("Not found");
-    
+
     const deletedItem = data[index];
     data.splice(index, 1);
     saveLocalData(entity, data);
