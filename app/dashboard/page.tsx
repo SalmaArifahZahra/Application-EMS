@@ -7,7 +7,7 @@ import { departmentService } from "@/features/department/services/department-ser
 import { positionService } from "@/features/position/service/position-service";
 import { userService } from "@/features/user/services/user-service";
 import { Users, Building2, Briefcase, UserCheck } from "lucide-react";
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from "recharts";
@@ -43,7 +43,6 @@ export default function DashboardPage() {
           totalUsers: users.length,
         });
 
-        // Prepare Pie Chart Data (Male vs Female)
         const genderCount = { Male: 0, Female: 0 };
         employees.forEach((emp) => {
           if (emp.gender === "Male" || emp.gender === "Laki-laki") genderCount.Male++;
@@ -54,7 +53,6 @@ export default function DashboardPage() {
           { name: "Perempuan", value: genderCount.Female },
         ]);
 
-        // Prepare Bar Chart Data (Employees per Department)
         const deptCount: Record<string, number> = {};
         employees.forEach((emp) => {
           deptCount[emp.departmentCode] = (deptCount[emp.departmentCode] || 0) + 1;
@@ -66,8 +64,7 @@ export default function DashboardPage() {
         }));
         setBarChartData(data);
 
-        // Prepare Recent Employees (last 5 based on createdAt)
-        const sortedEmployees = [...employees].sort((a, b) => 
+        const sortedEmployees = [...employees].sort((a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         setRecentEmployees(sortedEmployees.slice(0, 5));
@@ -83,58 +80,57 @@ export default function DashboardPage() {
 
   return (
     <section className="space-y-6">
-      {/* 4 Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        
-        {/* Card 1 */}
+
+        {/* card 1 */}
         <div className="flex items-center gap-4 rounded-xl bg-white p-5 shadow-sm">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0B1849]/10 text-[#0B1849]">
             <Users size={24} />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Karyawan</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Employees</p>
             <h3 className="text-2xl font-bold text-[#0B1849]">{stats.totalEmployees}</h3>
           </div>
         </div>
 
-        {/* Card 2 */}
+        {/* card 2 */}
         <div className="flex items-center gap-4 rounded-xl bg-white p-5 shadow-sm">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#124D1C]/10 text-[#124D1C]">
             <Building2 size={24} />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Departemen</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Departements</p>
             <h3 className="text-2xl font-bold text-[#0B1849]">{stats.totalDepartments}</h3>
           </div>
         </div>
 
-        {/* Card 3 */}
+        {/* card 3 */}
         <div className="flex items-center gap-4 rounded-xl bg-white p-5 shadow-sm">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E4B028]/10 text-[#E4B028]">
             <Briefcase size={24} />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Jabatan</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Positions</p>
             <h3 className="text-2xl font-bold text-[#0B1849]">{stats.totalPositions}</h3>
           </div>
         </div>
 
-        {/* Card 4 */}
+        {/* card 4 */}
         <div className="flex items-center gap-4 rounded-xl bg-white p-5 shadow-sm">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/10 text-purple-600">
             <UserCheck size={24} />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total User</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Users</p>
             <h3 className="text-2xl font-bold text-[#0B1849]">{stats.totalUsers}</h3>
           </div>
         </div>
 
       </div>
 
-      {/* Charts Section */}
+      {/* section chart */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Pie Chart */}
+        {/* pie Chart */}
         <div className="rounded-xl bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold text-slate-700">Statistik Gender Karyawan</h2>
           <div className="h-[250px] w-full">
@@ -161,7 +157,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Bar Chart */}
+        {/* bar Chart */}
         <div className="rounded-xl bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold text-slate-700">Karyawan per Departemen</h2>
           <div className="h-[250px] w-full">
@@ -170,7 +166,7 @@ export default function DashboardPage() {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} allowDecimals={false} />
-                <RechartsTooltip cursor={{fill: 'transparent'}} />
+                <RechartsTooltip cursor={{ fill: 'transparent' }} />
                 <Bar dataKey="employees" fill="#E4B028" radius={[4, 4, 0, 0]} maxBarSize={50} />
               </BarChart>
             </ResponsiveContainer>
@@ -178,7 +174,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Recent Employees Table */}
+      {/* karyawan history */}
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="p-6 border-b">
           <h2 className="text-sm font-semibold text-slate-700">Karyawan Terbaru</h2>
@@ -208,9 +204,8 @@ export default function DashboardPage() {
                     })}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-block font-medium ${
-                      emp.status === "Active" ? "text-[#124D1C]" : "text-red-500"
-                    }`}>
+                    <span className={`inline-block font-medium ${emp.status === "Active" ? "text-[#124D1C]" : "text-red-500"
+                      }`}>
                       {emp.status}
                     </span>
                   </td>

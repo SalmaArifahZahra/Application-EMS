@@ -26,7 +26,6 @@ export function DashboardSidebar() {
 
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
@@ -34,17 +33,13 @@ export function DashboardSidebar() {
         />
       )}
 
-      {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col bg-[#0B1849] text-white transition-transform duration-300 md:relative md:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col bg-[#0B1849] text-white transition-transform duration-300 md:relative md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex h-16 items-center justify-between border-b border-white/10 px-6">
-          <div className="flex items-center">
-            <h2 className="text-sm font-bold uppercase tracking-wider leading-snug text-white/90">
-              Employee Management System
-            </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-l font-bold uppercase tracking-wider">Employeement Management System</h2>
           </div>
           <button onClick={close} className="md:hidden text-white/70 hover:text-white">
             <X size={20} />
@@ -65,11 +60,10 @@ export function DashboardSidebar() {
                   <li key={menu.href}>
                     <Link
                       href={menu.href}
-                      className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm transition ${
-                        isActive
-                          ? "bg-white/10 text-white font-medium border-l-4 border-[#E4B028]"
-                          : "text-white/70 hover:bg-white/5 hover:text-white border-l-4 border-transparent"
-                      }`}
+                      className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm transition ${isActive
+                        ? "bg-white/10 text-white font-medium border-l-4 border-[#E4B028]"
+                        : "text-white/70 hover:bg-white/5 hover:text-white border-l-4 border-transparent"
+                        }`}
                     >
                       <Icon size={18} />
                       {menu.title}
@@ -82,7 +76,7 @@ export function DashboardSidebar() {
 
           <div className="px-4">
             <h3 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-white/50">
-              Pengaturan
+              Settings
             </h3>
             <ul className="space-y-1">
               {pengaturanMenus.map((menu) => {
@@ -93,11 +87,10 @@ export function DashboardSidebar() {
                   <li key={menu.href}>
                     <Link
                       href={menu.href}
-                      className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm transition ${
-                        isActive
-                          ? "bg-white/10 text-white font-medium border-l-4 border-[#E4B028]"
-                          : "text-white/70 hover:bg-white/5 hover:text-white border-l-4 border-transparent"
-                      }`}
+                      className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm transition ${isActive
+                        ? "bg-white/10 text-white font-medium border-l-4 border-[#E4B028]"
+                        : "text-white/70 hover:bg-white/5 hover:text-white border-l-4 border-transparent"
+                        }`}
                     >
                       <Icon size={18} />
                       {menu.title}
