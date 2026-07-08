@@ -11,6 +11,7 @@ import {
 } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/page-header";
 
@@ -45,12 +46,22 @@ export default function EditEmployeePage() {
   async function handleUpdate(values: EmployeeFormValues) {
     if (!employee) return;
 
-    await employeeService.update(employee.id, {
-      ...values,
-      userId: employee.userId, // preserve user id
-    });
+    try {
+      await employeeService.update(employee.id, {
+        ...values,
+        userId: employee.userId, // preserve user id
+      });
+      
+      toast.success("Employee updated successfully", {
+        description: `Employee ${values.firstName} ${values.lastName} has been updated.`,
+      });
 
-    router.push("/dashboard/employees");
+      router.push("/dashboard/employees");
+    } catch (error) {
+      toast.error("Failed to update employee", {
+        description: "An error occurred while updating the employee. Please try again.",
+      });
+    }
   }
 
   if (loading) {

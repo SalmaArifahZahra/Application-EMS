@@ -21,6 +21,7 @@ import { positionService } from "@/features/position/service/position-service";
 import { ConfirmDialog } from "@/components/feedback/confirm-dialog";
 import type { Position } from "@/features/position/types";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { toast } from "sonner";
 
 export default function PositionsPage() {
   const router = useRouter();
@@ -55,10 +56,16 @@ export default function PositionsPage() {
     if (!deleteId) return;
     try {
       await positionService.delete(deleteId);
+      toast("Position deleted successfully", {
+        description: `Position "${deleteName}" has been removed.`,
+        icon: <Trash2 size={16} className="text-red-500" />,
+      });
       loadPositions();
     } catch (error) {
       console.error(error);
-      alert("Failed to delete position");
+      toast.error("Failed to delete position", {
+        description: "An error occurred while deleting the position.",
+      });
     } finally {
       setDeleteId(null);
     }

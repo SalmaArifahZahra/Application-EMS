@@ -49,6 +49,7 @@ export function EmployeeForm({
 }: EmployeeFormProps) {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
+  const [loadingMasterData, setLoadingMasterData] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(initialValues?.image || null);
 
   const {
@@ -89,6 +90,7 @@ export function EmployeeForm({
       const positionData = await positionService.getAll();
       setDepartments(departmentData);
       setPositions(positionData);
+      setLoadingMasterData(false);
     }
     loadMasterData();
   }, []);
@@ -109,6 +111,10 @@ export function EmployeeForm({
       reader.readAsDataURL(file);
     }
   };
+
+  if (loadingMasterData) {
+    return <div className="py-8 text-center text-sm text-slate-500">Loading form data...</div>;
+  }
 
   return (
     <form onSubmit={handleSubmit(submitForm as any)} className="space-y-6">
@@ -176,7 +182,7 @@ export function EmployeeForm({
           <Input type="file" accept="image/*" onChange={handleImageChange} />
           {imagePreview && (
             <div className="mt-2">
-              <img src={imagePreview} alt="Preview" className="h-24 w-24 rounded-full object-cover border" />
+              <img src={imagePreview} alt="Preview" className="h-24 w-24 rounded-full object-cover aspect-square border" />
             </div>
           )}
         </div>

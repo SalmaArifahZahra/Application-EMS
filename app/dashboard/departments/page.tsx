@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/data-display/empty-state";
 import { TableSkeleton } from "@/components/feedback/table-skeleton";
 import { SearchInput } from "@/components/form/search-input";
-import { Filter, Upload, Plus, MoreHorizontal, ChevronsUpDown } from "lucide-react";
+import { Filter, Upload, Plus, MoreHorizontal, ChevronsUpDown, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,10 +56,16 @@ export default function DepartmentsPage() {
     if (!deleteId) return;
     try {
       await departmentService.delete(deleteId);
+      toast("Department deleted successfully", {
+        description: `Department "${deleteName}" has been removed.`,
+        icon: <Trash2 size={16} className="text-red-500" />,
+      });
       loadDepartments();
     } catch (error) {
       console.error(error);
-      alert("Failed to delete department");
+      toast.error("Failed to delete department", {
+        description: "An error occurred while deleting the department.",
+      });
     } finally {
       setDeleteId(null);
     }

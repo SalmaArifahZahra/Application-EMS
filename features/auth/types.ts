@@ -13,7 +13,7 @@ export interface ApiUser {
   image: string;
   isActive: boolean;
   createdAt: string;
-  updatedAt: string;
+  updatedAt: string; 
 }
 
 export interface AuthUser {

@@ -8,6 +8,7 @@ import { positionService } from "@/features/position/service/position-service";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { Position } from "@/features/position/types";
+import { toast } from "sonner";
 
 export default function EditPositionPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function EditPositionPage({ params }: { params: Promise<{ id: str
         setPosition(data);
       } catch (error) {
         console.error(error);
-        alert("Failed to load position");
+        toast.error("Failed to load position");
         router.push("/dashboard/positions");
       } finally {
         setLoading(false);
@@ -36,10 +37,15 @@ export default function EditPositionPage({ params }: { params: Promise<{ id: str
     try {
       setSubmitting(true);
       await positionService.update(id, values);
+      toast.success("Position updated successfully", {
+        description: `Position ${values.name} has been updated.`,
+      });
       router.push("/dashboard/positions");
     } catch (error) {
       console.error(error);
-      alert("Failed to update position");
+      toast.error("Failed to update position", {
+        description: "An error occurred while updating the position.",
+      });
     } finally {
       setSubmitting(false);
     }

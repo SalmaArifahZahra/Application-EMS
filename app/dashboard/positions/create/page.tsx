@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { PositionForm } from "@/features/position/components/position-form";
@@ -26,9 +27,16 @@ export default function CreatePositionPage() {
         createdAt: new Date().toISOString(),
       });
 
+      toast.success("Position created successfully", {
+        description: `Position ${values.name} has been added.`,
+      });
+
       router.push("/dashboard/positions");
     } catch (error) {
       console.error(error);
+      toast.error("Failed to create position", {
+        description: "An error occurred while creating the position.",
+      });
     } finally {
       setLoading(false);
     }

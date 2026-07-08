@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/data-display/empty-state";
 import { TableSkeleton } from "@/components/feedback/table-skeleton";
 import { SearchInput } from "@/components/form/search-input";
-import { Filter, Upload, Plus, MoreHorizontal, ChevronsUpDown } from "lucide-react";
+import { Filter, Upload, Plus, MoreHorizontal, ChevronsUpDown, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,10 +61,16 @@ export default function UsersPage() {
     if (!deleteId) return;
     try {
       await userService.delete(deleteId);
+      toast("User deleted successfully", {
+        description: `User "${deleteName}" has been removed.`,
+        icon: <Trash2 size={16} className="text-red-500" />,
+      });
       loadUsers();
     } catch (error) {
       console.error(error);
-      alert("Failed to delete user");
+      toast.error("Failed to delete user", {
+        description: "An error occurred while deleting the user.",
+      });
     } finally {
       setDeleteId(null);
     }
@@ -174,7 +181,7 @@ export default function UsersPage() {
                         alt={u.username}
                         width={36}
                         height={36}
-                        className="rounded-full object-cover border border-slate-200"
+                        className="rounded-full object-cover aspect-square border border-slate-200"
                       />
                       <div className="flex flex-col">
                         <span className="font-semibold text-slate-800">{u.username}</span>

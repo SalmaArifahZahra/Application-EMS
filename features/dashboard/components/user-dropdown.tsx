@@ -40,7 +40,7 @@ export function UserDropdown() {
             alt={user.fullName || user.username || "User Avatar"}
             width={40}
             height={40}
-            className="rounded-full"
+            className="rounded-full object-cover aspect-square"
           />
         </div>
       </DropdownMenuTrigger>

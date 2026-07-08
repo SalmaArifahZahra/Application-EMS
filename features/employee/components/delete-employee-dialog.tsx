@@ -1,6 +1,7 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 
@@ -30,12 +31,19 @@ export function DeleteEmployeeButton({
 
     try {
       await employeeService.delete(id);
+      
+      toast("Employee deleted successfully", {
+        description: `Employee "${fullName}" has been removed.`,
+        icon: <Trash2 size={16} className="text-red-500" />,
+      });
 
       onSuccess();
     } catch (error) {
       console.error(error);
 
-      alert("Failed to delete employee.");
+      toast.error("Failed to delete employee", {
+        description: "An error occurred while deleting the employee.",
+      });
     }
   }
 

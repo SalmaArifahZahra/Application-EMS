@@ -18,6 +18,7 @@ interface PositionFormProps {
 
 export function PositionForm({ initialValues, loading = false, onSubmit }: PositionFormProps) {
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [loadingMasterData, setLoadingMasterData] = useState(true);
   const [values, setValues] = useState<PositionFormValues>({
     code: initialValues?.code ?? "",
     name: initialValues?.name ?? "",
@@ -33,6 +34,7 @@ export function PositionForm({ initialValues, loading = false, onSubmit }: Posit
     async function loadMasterData() {
       const departmentData = await departmentService.getAll();
       setDepartments(departmentData);
+      setLoadingMasterData(false);
     }
     loadMasterData();
   }, []);
@@ -56,6 +58,10 @@ export function PositionForm({ initialValues, loading = false, onSubmit }: Posit
     }
 
     await onSubmit(values);
+  }
+
+  if (loadingMasterData) {
+    return <div className="py-8 text-center text-sm text-slate-500">Loading form data...</div>;
   }
 
   return (
