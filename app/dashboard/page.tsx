@@ -159,7 +159,7 @@ export default function DashboardPage() {
 
         {/* bar Chart */}
         <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-sm font-semibold text-slate-700">Karyawan per Departemen</h2>
+          <h2 className="mb-4 text-sm font-semibold text-slate-700">Employees by Departments</h2>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -177,16 +177,16 @@ export default function DashboardPage() {
       {/* karyawan history */}
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="p-6 border-b">
-          <h2 className="text-sm font-semibold text-slate-700">Karyawan Terbaru</h2>
+          <h2 className="text-sm font-semibold text-slate-700">Recent Employees</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full whitespace-nowrap text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
                 <th className="px-6 py-4 text-left font-medium">Employee Code</th>
-                <th className="px-6 py-4 text-left font-medium">Nama Karyawan</th>
-                <th className="px-6 py-4 text-left font-medium">Departemen</th>
-                <th className="px-6 py-4 text-left font-medium">Tanggal Bergabung</th>
+                <th className="px-6 py-4 text-left font-medium">Employee Name</th>
+                <th className="px-6 py-4 text-left font-medium">Departements</th>
+                <th className="px-6 py-4 text-left font-medium">Join Date</th>
                 <th className="px-6 py-4 text-left font-medium">Status</th>
               </tr>
             </thead>
@@ -214,7 +214,7 @@ export default function DashboardPage() {
               {recentEmployees.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
-                    Belum ada data karyawan.
+                    There is no employee data yet.
                   </td>
                 </tr>
               )}
