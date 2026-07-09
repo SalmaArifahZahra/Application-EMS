@@ -18,11 +18,10 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
 
-// Helper to generate a realistic activity list based on timestamps
 function generateRecentActivities(user: any, employee: Employee | null) {
   const activities = [];
 
-  // Account creation
+  // Account 
   if (user?.createdAt) {
     activities.push({
       id: "user-created",
@@ -35,7 +34,7 @@ function generateRecentActivities(user: any, employee: Employee | null) {
     });
   }
 
-  // Profile update
+  // Profile 
   if (employee?.updatedAt) {
     activities.push({
       id: "profile-updated",
@@ -48,7 +47,7 @@ function generateRecentActivities(user: any, employee: Employee | null) {
     });
   }
 
-  // Joined company
+  // Joined 
   if (employee?.joinDate) {
     activities.push({
       id: "joined-company",
@@ -61,7 +60,7 @@ function generateRecentActivities(user: any, employee: Employee | null) {
     });
   }
 
-  // Account updated (user record)
+  // Account updated 
   if (user?.updatedAt && user.updatedAt !== user.createdAt) {
     activities.push({
       id: "account-updated",
@@ -74,10 +73,10 @@ function generateRecentActivities(user: any, employee: Employee | null) {
     });
   }
 
-  // Sort by timestamp descending (newest first)
+
   activities.sort((a, b) => b.timestamp - a.timestamp);
 
-  // Return only the top 3
+  // 3 history
   return activities.slice(0, 3);
 }
 

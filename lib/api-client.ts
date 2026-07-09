@@ -19,7 +19,6 @@ export const apiClient = {
       headers: { "Content-Type": "application/json" },
     });
     
-    // Fallback for MockAPI quirk where it returns 404 for integer IDs
     if (res.status === 404) {
       const match = url.match(/(.*)\/([^\/]+)$/);
       if (match) {

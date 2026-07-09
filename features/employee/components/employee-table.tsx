@@ -46,13 +46,19 @@ export function EmployeeTable({ employees, onRefresh }: EmployeeTableProps) {
           {employees.map((employee) => (
             <tr key={employee.id} className="border-t">
               <BodyCell>
-                <Image
-                  src={employee.image}
-                  alt={employee.firstName}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
+                {employee.image ? (
+                  <Image
+                    src={employee.image}
+                    alt={employee.firstName}
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover aspect-square"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-sm font-semibold text-slate-500">
+                    {employee.firstName?.charAt(0)}{employee.lastName?.charAt(0)}
+                  </div>
+                )}
               </BodyCell>
 
 

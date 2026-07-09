@@ -37,12 +37,10 @@ export function ProtectedRoute({
   const permissions = ROLE_PERMISSIONS[user.role];
 
   const allowed = permissions.some((route) => {
-    // "/dashboard" hanya boleh untuk halaman dashboard utama
     if (route === "/dashboard") {
       return pathname === "/dashboard";
     }
 
-    // route lain boleh beserta child route-nya
     return pathname === route || pathname.startsWith(`${route}/`);
   });
 
