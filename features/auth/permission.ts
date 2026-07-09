@@ -1,11 +1,10 @@
 import type { UserRole } from "./types";
 
-export const ROLE_PERMISSIONS: Record<
-  UserRole,
-  string[]
-> = {
+export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
   superadmin: [
     "/dashboard",
+    "/dashboard/profile",
+    "/dashboard/change-password",
     "/dashboard/employees",
     "/dashboard/departments",
     "/dashboard/positions",
@@ -15,6 +14,8 @@ export const ROLE_PERMISSIONS: Record<
 
   hrd: [
     "/dashboard",
+    "/dashboard/profile",
+    "/dashboard/change-password",
     "/dashboard/employees",
     "/dashboard/departments",
     "/dashboard/positions",

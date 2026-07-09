@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { ApiUser, UserRole } from "@/features/auth/types";
 
 type UserFormValues = Omit<ApiUser, "id" | "createdAt" | "updatedAt">;
@@ -12,9 +14,15 @@ interface UserFormProps {
   initialValues?: UserFormValues;
   loading?: boolean;
   onSubmit(values: UserFormValues): Promise<void>;
+  onChangePassword?(): void;
 }
 
-export function UserForm({ initialValues, loading = false, onSubmit }: UserFormProps) {
+export function UserForm({
+  initialValues,
+  loading = false,
+  onSubmit,
+  onChangePassword,
+}: UserFormProps) {
   const [values, setValues] = useState<UserFormValues>({
     employeeCode: initialValues?.employeeCode ?? "",
     username: initialValues?.username ?? "",
@@ -25,21 +33,71 @@ export function UserForm({ initialValues, loading = false, onSubmit }: UserFormP
     isActive: initialValues?.isActive ?? true,
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof UserFormValues, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof UserFormValues, string>>
+  >({});
 
-  function handleChange(key: keyof UserFormValues, value: string | boolean) {
-    setValues((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => ({ ...prev, [key]: "" }));
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    initialValues?.image || null,
+  );
+
+  function handleChange(
+    key: keyof UserFormValues,
+    value: string | boolean,
+  ) {
+    setValues((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [key]: "",
+    }));
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleImageChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+
+      setImagePreview(base64);
+
+      handleChange("image", base64);
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault();
-    
+
     const newErrors: typeof errors = {};
-    if (!values.employeeCode.trim()) newErrors.employeeCode = "Employee code is required";
-    if (!values.username.trim()) newErrors.username = "Username is required";
-    if (!values.email.trim()) newErrors.email = "Email is required";
-    if (!values.password.trim()) newErrors.password = "Password is required";
+
+    if (!values.employeeCode.trim()) {
+      newErrors.employeeCode = "Employee code is required";
+    }
+
+    if (!values.username.trim()) {
+      newErrors.username = "Username is required";
+    }
+
+    if (!values.email.trim()) {
+      newErrors.email = "Email is required";
+    }
+
+    if (!values.password.trim()) {
+      newErrors.password = "Password is required";
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -58,12 +116,14 @@ export function UserForm({ initialValues, loading = false, onSubmit }: UserFormP
           onChange={(v) => handleChange("employeeCode", v)}
           error={errors.employeeCode}
         />
+
         <FormInput
           label="Username"
           value={values.username}
           onChange={(v) => handleChange("username", v)}
           error={errors.username}
         />
+
         <FormInput
           label="Email (Username)"
           type="email"
@@ -71,48 +131,113 @@ export function UserForm({ initialValues, loading = false, onSubmit }: UserFormP
           onChange={(v) => handleChange("email", v)}
           error={errors.email}
         />
-        <FormInput
-          label="Password"
-          type="password"
-          value={values.password}
-          onChange={(v) => handleChange("password", v)}
-          error={errors.password}
-        />
-        
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label>Password</Label>
+
+            <button
+              type="button"
+              onClick={onChangePassword}
+              className="text-sm font-medium text-[#0B1849] transition hover:underline"
+            >
+              Change Password
+            </button>
+          </div>
+
+          <Input
+            type="password"
+            value={values.password}
+            onChange={(e) =>
+              handleChange("password", e.target.value)
+            }
+          />
+
+          {errors.password && (
+            <p className="text-sm text-red-500">
+              {errors.password}
+            </p>
+          )}
+        </div>
+
         <div className="space-y-2">
           <Label>Role</Label>
+
           <select
             value={values.role}
-            onChange={(e) => handleChange("role", e.target.value as UserRole)}
+            onChange={(e) =>
+              handleChange(
+                "role",
+                e.target.value as UserRole,
+              )
+            }
             className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus-visible:border-[#0B1849] focus-visible:ring-1 focus-visible:ring-[#0B1849]"
           >
-            <option value="superadmin">Super Admin</option>
-            <option value="hrd">HRD</option>
-            <option value="employee">Employee</option>
-          </select>
-        </div>
-        
-        <div className="space-y-2">
-          <Label>Status</Label>
-          <select
-            value={values.isActive ? "true" : "false"}
-            onChange={(e) => handleChange("isActive", e.target.value === "true")}
-            className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus-visible:border-[#0B1849] focus-visible:ring-1 focus-visible:ring-[#0B1849]"
-          >
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
+            <option value="superadmin">
+              Super Admin
+            </option>
+
+            <option value="hrd">
+              HRD
+            </option>
+
+            <option value="employee">
+              Employee
+            </option>
           </select>
         </div>
 
-        <FormInput
-          label="Image URL"
-          value={values.image}
-          onChange={(v) => handleChange("image", v)}
-        />
+        <div className="space-y-2">
+          <Label>Status</Label>
+
+          <select
+            value={
+              values.isActive ? "true" : "false"
+            }
+            onChange={(e) =>
+              handleChange(
+                "isActive",
+                e.target.value === "true",
+              )
+            }
+            className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none focus-visible:border-[#0B1849] focus-visible:ring-1 focus-visible:ring-[#0B1849]"
+          >
+            <option value="true">
+              Active
+            </option>
+
+            <option value="false">
+              Inactive
+            </option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Photo Profile</Label>
+
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+
+          {imagePreview && (
+            <div className="mt-2">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="h-24 w-24 rounded-full border object-cover"
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={loading}>
+        <Button
+          type="submit"
+          disabled={loading}
+        >
           {loading ? "Saving..." : "Save User"}
         </Button>
       </div>
@@ -128,16 +253,30 @@ interface FormInputProps {
   error?: string;
 }
 
-function FormInput({ label, value, onChange, type = "text", error }: FormInputProps) {
+function FormInput({
+  label,
+  value,
+  onChange,
+  type = "text",
+  error,
+}: FormInputProps) {
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
+
       <Input
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) =>
+          onChange(e.target.value)
+        }
       />
-      {error && <p className="text-sm text-red-500">{error}</p>}
+
+      {error && (
+        <p className="text-sm text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
