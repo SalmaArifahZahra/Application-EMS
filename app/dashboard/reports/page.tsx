@@ -26,10 +26,7 @@ export default function ReportsPage() {
         ]);
 
         const activeEmployees = employees.filter(e => e.status === "Active").length;
-
-        // Group by department
         const deptCount: Record<string, number> = {};
-        // Group by gender
         const genderCount: Record<string, number> = { Male: 0, Female: 0 };
 
         employees.forEach(emp => {

@@ -42,9 +42,10 @@ const employeeFormSchema = z.object({
   basicSalary: z.coerce.number().min(0, "Salary must be >= 0"),
   image: z.string().optional().transform(v => v || ""),
   status: z.string().min(1, "Status is required"),
+  joinDate: z.string().min(1, "Join Date is required"),
 });
 
-type EmployeeFormValues = Omit<Employee, "id" | "createdAt" | "updatedAt" | "userId" | "joinDate">;
+type EmployeeFormValues = Omit<Employee, "id" | "createdAt" | "updatedAt" | "userId"> & { updatedAt?: string };
 
 interface EmployeeFormProps {
   initialValues?: EmployeeFormValues;
@@ -86,6 +87,7 @@ export function EmployeeForm({
       basicSalary: initialValues?.basicSalary ?? ("" as any),
       image: initialValues?.image ?? "",
       status: initialValues?.status ?? "Active",
+      joinDate: initialValues?.joinDate ?? new Date().toISOString().split("T")[0],
     },
   });
 
@@ -265,6 +267,12 @@ export function EmployeeForm({
           </select>
           {errors.status && <p className="text-sm text-red-500">{errors.status.message}</p>}
         </div>
+
+        <FormInput label="Join Date" type="date" {...register("joinDate")} error={errors.joinDate?.message} />
+
+        {initialValues?.updatedAt && (
+          <FormInput label="Updated At" type="text" value={new Date(initialValues.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} readOnly disabled className="bg-slate-50 cursor-not-allowed" />
+        )}
 
         <div className="space-y-2">
           <Label>Photo Profile</Label>

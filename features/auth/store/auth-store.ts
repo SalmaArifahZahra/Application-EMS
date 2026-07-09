@@ -7,15 +7,10 @@ import type { AuthUser } from "../types";
 
 interface AuthState {
   user: AuthUser | null;
-
   hydrated: boolean;
-
   login(user: AuthUser): void;
-
   logout(): void;
-
   setUser(user: AuthUser | null): void;
-
   setHydrated(state: boolean): void;
 }
 
@@ -24,9 +19,7 @@ export const useAuthStore =
     persist(
       (set) => ({
         user: null,
-
         isAuthenticated: false,
-
         hydrated: false,
 
         login(user) {
@@ -34,13 +27,13 @@ export const useAuthStore =
             user,
           });
         },
-      logout() {
-        set({
-          user: null,
 
-          hydrated: true,
-        });
-      },
+        logout() {
+          set({
+            user: null,
+            hydrated: true,
+          });
+        },
 
         setUser(user) {
           set({

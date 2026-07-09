@@ -17,6 +17,8 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const [stats, setStats] = useState({
     totalEmployees: 0,
+    activeEmployees: 0,
+    inactiveEmployees: 0,
     totalDepartments: 0,
     totalPositions: 0,
     totalUsers: 0,
@@ -38,6 +40,8 @@ export default function DashboardPage() {
 
         setStats({
           totalEmployees: employees.length,
+          activeEmployees: employees.filter(e => e.status === "Active").length,
+          inactiveEmployees: employees.filter(e => e.status === "Inactive").length,
           totalDepartments: departments.length,
           totalPositions: positions.length,
           totalUsers: users.length,
@@ -87,9 +91,19 @@ export default function DashboardPage() {
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0B1849]/10 text-[#0B1849]">
             <Users size={24} />
           </div>
-          <div>
+          <div className="flex-1">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Employees</p>
-            <h3 className="text-2xl font-bold text-[#0B1849]">{stats.totalEmployees}</h3>
+            <h3 className="text-2xl font-bold text-[#0B1849] mb-2">{stats.totalEmployees}</h3>
+            <div className="flex items-center gap-3 text-xs">
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                <span className="text-slate-600 font-medium">{stats.activeEmployees} Active</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                <span className="text-slate-600 font-medium">{stats.inactiveEmployees} Inactive</span>
+              </div>
+            </div>
           </div>
         </div>
 

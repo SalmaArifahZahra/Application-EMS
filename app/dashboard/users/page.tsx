@@ -155,10 +155,19 @@ export default function UsersPage() {
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">User <ChevronsUpDown size={14} /></div>
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Name <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Email <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Employee Code <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Username <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Password <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Role <ChevronsUpDown size={14} /></div>
@@ -167,29 +176,18 @@ export default function UsersPage() {
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Status <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-center font-medium text-slate-400">
-                  <div className="flex items-center justify-center gap-1 cursor-pointer hover:text-slate-600">Action <ChevronsUpDown size={14} /></div>
+                  <div className="flex items-center justify-center gap-1 cursor-pointer hover:text-slate-600">Action</div>
                 </th>
               </tr>
             </thead>
             <tbody>
               {paginatedData.map((u) => (
                 <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                  <td className="py-3 px-2">
-                    <div className="flex items-center gap-3">
-                      <Image
-                        src={u.image || "/images/avatar.jpeg"}
-                        alt={u.username}
-                        width={36}
-                        height={36}
-                        className="rounded-full object-cover aspect-square border border-slate-200"
-                      />
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-slate-800">{u.username}</span>
-                        <span className="text-xs text-slate-500">{u.email}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-2 text-slate-600">{u.employeeCode || "-"}</td>
+                  <td className="py-3 px-2 text-slate-800 font-semibold">{u.username}</td>
+                  <td className="py-3 px-2 text-slate-600">{u.email}</td>
+                  <td className="py-3 px-2 text-slate-600 font-medium">{u.employeeCode || "-"}</td>
+                  <td className="py-3 px-2 text-slate-600">{u.username}</td>
+                  <td className="py-3 px-2 text-slate-400">••••••••</td>
                   <td className="py-3 px-2">
                     <span className="text-slate-600 font-medium capitalize">{u.role}</span>
                   </td>

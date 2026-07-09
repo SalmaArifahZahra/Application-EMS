@@ -32,6 +32,9 @@ export default function EmployeePage() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [filterDept, setFilterDept] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
 
   async function loadEmployees() {
     try {
@@ -49,15 +52,26 @@ export default function EmployeePage() {
     loadEmployees();
   }, []);
 
-  const filteredEmployees = employees.filter((employee) => {
+  let filteredEmployees = employees.filter((employee) => {
     const keyword = search.toLowerCase();
-    return (
+    const matchesSearch = (
       employee.employeeCode.toLowerCase().includes(keyword) ||
-      employee.firstName.toLowerCase().includes(keyword) ||
-      employee.lastName.toLowerCase().includes(keyword) ||
+      (employee.firstName + " " + employee.lastName).toLowerCase().includes(keyword) ||
       employee.email.toLowerCase().includes(keyword)
     );
+    const matchesDept = filterDept ? employee.departmentCode === filterDept : true;
+    const matchesStatus = filterStatus ? employee.status === filterStatus : true;
+    
+    return matchesSearch && matchesDept && matchesStatus;
   });
+
+  if (sortOrder === "asc") {
+    filteredEmployees = filteredEmployees.sort((a, b) => (a.firstName + " " + a.lastName).localeCompare(b.firstName + " " + b.lastName));
+  } else if (sortOrder === "desc") {
+    filteredEmployees = filteredEmployees.sort((a, b) => (b.firstName + " " + b.lastName).localeCompare(a.firstName + " " + a.lastName));
+  }
+
+  const uniqueDepartments = Array.from(new Set(employees.map(e => e.departmentCode)));
 
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
   const paginatedEmployees = filteredEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -102,9 +116,34 @@ export default function EmployeePage() {
             </select>
           </div>
           
-          <Button variant="outline" className="gap-2 text-slate-600 rounded-lg border-slate-200">
-            <Filter size={16} /> Filter
-          </Button>
+          <select
+            value={filterDept}
+            onChange={(e) => { setFilterDept(e.target.value); setCurrentPage(1); }}
+            className="bg-slate-100 rounded-md px-2 py-1.5 outline-none text-slate-700 font-medium text-sm border-r-4 border-transparent"
+          >
+            <option value="">All Departments</option>
+            {uniqueDepartments.map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
+
+          <select
+            value={filterStatus}
+            onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }}
+            className="bg-slate-100 rounded-md px-2 py-1.5 outline-none text-slate-700 font-medium text-sm border-r-4 border-transparent"
+          >
+            <option value="">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+
+          <select
+            value={sortOrder}
+            onChange={(e) => { setSortOrder(e.target.value); setCurrentPage(1); }}
+            className="bg-slate-100 rounded-md px-2 py-1.5 outline-none text-slate-700 font-medium text-sm border-r-4 border-transparent"
+          >
+            <option value="">Sort by Name</option>
+            <option value="asc">A - Z</option>
+            <option value="desc">Z - A</option>
+          </select>
 
           <Button variant="outline" onClick={handleExportCSV} className="gap-2 text-slate-600 rounded-lg border-slate-200">
             <Upload size={16} /> Export
@@ -130,16 +169,13 @@ export default function EmployeePage() {
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Profile <ChevronsUpDown size={14} /></div>
-                </th>
-                <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Employee Name <ChevronsUpDown size={14} /></div>
-                </th>
-                <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Employee ID <ChevronsUpDown size={14} /></div>
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Profile</div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">NIK <ChevronsUpDown size={14} /></div>
+                </th>
+                <th className="py-4 px-2 text-left font-medium text-slate-400">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Name <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Email <ChevronsUpDown size={14} /></div>
@@ -148,19 +184,13 @@ export default function EmployeePage() {
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Phone <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Gender <ChevronsUpDown size={14} /></div>
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Departments <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Birth Info <ChevronsUpDown size={14} /></div>
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Positions <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Department <ChevronsUpDown size={14} /></div>
-                </th>
-                <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Position <ChevronsUpDown size={14} /></div>
-                </th>
-                <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Salary <ChevronsUpDown size={14} /></div>
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Status <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Join Date <ChevronsUpDown size={14} /></div>
@@ -168,11 +198,8 @@ export default function EmployeePage() {
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Updated At <ChevronsUpDown size={14} /></div>
                 </th>
-                <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Status <ChevronsUpDown size={14} /></div>
-                </th>
                 <th className="py-4 px-2 text-center font-medium text-slate-400">
-                  <div className="flex items-center justify-center gap-1 cursor-pointer hover:text-slate-600">Action <ChevronsUpDown size={14} /></div>
+                  <div className="flex items-center justify-center gap-1 cursor-pointer hover:text-slate-600">Action</div>
                 </th>
               </tr>
             </thead>
@@ -182,30 +209,20 @@ export default function EmployeePage() {
                   <td className="py-3 px-2">
                     <Image
                       src={emp.image}
-                      alt={emp.firstName}
+                      alt={`${emp.firstName} ${emp.lastName}`}
                       width={36}
                       height={36}
                       className="rounded-full object-cover aspect-square border border-slate-200"
                     />
                   </td>
+                  <td className="py-3 px-2 text-slate-500">{emp.nik}</td>
                   <td className="py-3 px-2">
                     <span className="font-semibold text-slate-800">{emp.firstName} {emp.lastName}</span>
                   </td>
-                  <td className="py-3 px-2 text-slate-500 font-medium">#{emp.employeeCode}</td>
-                  <td className="py-3 px-2 text-slate-500">{emp.nik}</td>
                   <td className="py-3 px-2 text-slate-500">{emp.email}</td>
                   <td className="py-3 px-2 text-slate-500">{emp.phone}</td>
-                  <td className="py-3 px-2 text-slate-500">{emp.gender}</td>
-                  <td className="py-3 px-2 text-slate-500">{emp.birthPlace}, {emp.birthDate}</td>
                   <td className="py-3 px-2 text-slate-500">{emp.departmentCode}</td>
                   <td className="py-3 px-2 text-slate-500">{emp.positionCode}</td>
-                  <td className="py-3 px-2 text-slate-500">Rp {new Intl.NumberFormat("id-ID").format(emp.basicSalary)}</td>
-                  <td className="py-3 px-2 text-slate-500">
-                    {new Date(emp.joinDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </td>
-                  <td className="py-3 px-2 text-slate-500">
-                    {new Date(emp.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </td>
                   <td className="py-3 px-2">
                     <span className={`inline-flex items-center justify-center px-3 py-1 text-xs font-semibold rounded-full ${
                       emp.status === "Active" 
@@ -214,6 +231,12 @@ export default function EmployeePage() {
                     }`}>
                       {emp.status}
                     </span>
+                  </td>
+                  <td className="py-3 px-2 text-slate-500">
+                    {new Date(emp.joinDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </td>
+                  <td className="py-3 px-2 text-slate-500">
+                    {new Date(emp.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
                   <td className="py-3 px-2 text-center">
                     <DropdownMenu>

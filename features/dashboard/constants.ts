@@ -12,9 +12,7 @@ import type { UserRole } from "@/features/auth/types";
 
 export interface DashboardMenu {
   title: string;
-
   href: string;
-
   icon: React.ComponentType<{
     className?: string;
     size?: number;

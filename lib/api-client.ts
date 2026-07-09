@@ -24,18 +24,18 @@ async function delay() {
 
 function getLocalData<T>(entity: string): T[] {
   if (typeof window === "undefined") return [];
-  const stored = localStorage.getItem(`ems_v2_${entity}`);
+  const stored = localStorage.getItem(`ems_v3_${entity}`);
   if (stored) {
     return JSON.parse(stored) as T[];
   }
   const seed = SEED_DATA[entity] || [];
-  localStorage.setItem(`ems_v2_${entity}`, JSON.stringify(seed));
+  localStorage.setItem(`ems_v3_${entity}`, JSON.stringify(seed));
   return seed as unknown as T[];
 }
 
 function saveLocalData<T>(entity: string, data: T[]) {
   if (typeof window !== "undefined") {
-    localStorage.setItem(`ems_v2_${entity}`, JSON.stringify(data));
+    localStorage.setItem(`ems_v3_${entity}`, JSON.stringify(data));
   }
 }
 

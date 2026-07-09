@@ -15,7 +15,7 @@ export function DashboardSidebar() {
   const overviewMenus = DASHBOARD_MENU.filter(
     (menu) =>
       menu.roles.includes(user?.role ?? "employee") &&
-      ["/dashboard", "/dashboard/employees", "/dashboard/departments", "/dashboard/positions"].includes(menu.href)
+      ["/dashboard", "/dashboard/employees", "/dashboard/departments", "/dashboard/positions", "/dashboard/reports"].includes(menu.href)
   );
 
   const pengaturanMenus = DASHBOARD_MENU.filter(
