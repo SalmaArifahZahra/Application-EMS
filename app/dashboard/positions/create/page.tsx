@@ -22,9 +22,11 @@ export default function CreatePositionPage() {
     try {
       setLoading(true);
 
+      const now = new Date().toISOString();
       await positionService.create({
         ...values,
-        createdAt: new Date().toISOString(),
+        createdAt: now,
+        updatedAt: now,
       });
 
       toast.success("Position created successfully", {

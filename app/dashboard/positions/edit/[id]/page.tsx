@@ -36,7 +36,10 @@ export default function EditPositionPage({ params }: { params: Promise<{ id: str
   async function handleSubmit(values: Omit<import("@/features/position/types").Position, "id" | "createdAt">) {
     try {
       setSubmitting(true);
-      await positionService.update(id, values);
+      await positionService.update(id, {
+        ...values,
+        updatedAt: new Date().toISOString(),
+      });
       toast.success("Position updated successfully", {
         description: `Position ${values.name} has been updated.`,
       });
