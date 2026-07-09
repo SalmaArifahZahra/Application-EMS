@@ -147,10 +147,6 @@ export function LoginForm() {
 
               {error && <p className="text-sm text-red-600">{error}</p>}
 
-              <div className="cursor-pointer text-right text-sm text-amber-950 hover:underline">
-                Forgot Password?
-              </div>
-
               <Button
                 type="submit"
                 disabled={loading}
