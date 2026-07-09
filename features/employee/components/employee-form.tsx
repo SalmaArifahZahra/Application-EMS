@@ -17,7 +17,7 @@ import { departmentService } from "@/features/department/services/department-ser
 import { positionService } from "@/features/position/service/position-service";
 import { useForm as useRHForm } from "react-hook-form";
 
-const employeeFormSchema = z.object({
+export const employeeFormSchema = z.object({
   nik: z.string()
     .length(16, "NIK must be exactly 16 digits")
     .regex(/^\d+$/, "NIK must contain only numbers"),
