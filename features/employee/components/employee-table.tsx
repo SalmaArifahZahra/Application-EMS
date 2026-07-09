@@ -55,7 +55,7 @@ export function EmployeeTable({ employees, onRefresh }: EmployeeTableProps) {
                 />
               </BodyCell>
 
-              <BodyCell>{employee.employeeCode}</BodyCell>
+
               <BodyCell>{employee.nik}</BodyCell>
               <BodyCell>
                 {employee.firstName} {employee.lastName}

@@ -86,7 +86,6 @@ export default function EditEmployeePage() {
 
       <EmployeeForm
         initialValues={{
-          employeeCode: employee.employeeCode,
           nik: employee.nik,
           firstName: employee.firstName,
           lastName: employee.lastName,
@@ -101,6 +100,7 @@ export default function EditEmployeePage() {
           basicSalary: employee.basicSalary,
           image: employee.image,
           status: employee.status,
+          joinDate: employee.joinDate,
         }}
         onSubmit={handleUpdate}
       />

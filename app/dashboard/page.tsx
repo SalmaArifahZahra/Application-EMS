@@ -12,6 +12,8 @@ import {
   PieChart, Pie, Cell, Legend
 } from "recharts";
 import type { Employee } from "@/features/employee/types";
+import { formatDate } from "@/lib/utils";
+import { EmployeeDashboard } from "@/features/dashboard/components/employee-dashboard";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -81,6 +83,10 @@ export default function DashboardPage() {
   }, [user]);
 
   const PIE_COLORS = ["#0B1849", "#E4B028"];
+
+  if (user?.role === "employee") {
+    return <EmployeeDashboard />;
+  }
 
   return (
     <section className="space-y-6">
@@ -197,7 +203,7 @@ export default function DashboardPage() {
           <table className="w-full whitespace-nowrap text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
-                <th className="px-6 py-4 text-left font-medium">Employee Code</th>
+                <th className="px-6 py-4 text-left font-semibold text-slate-500">NIK</th>
                 <th className="px-6 py-4 text-left font-medium">Employee Name</th>
                 <th className="px-6 py-4 text-left font-medium">Departements</th>
                 <th className="px-6 py-4 text-left font-medium">Join Date</th>
@@ -207,15 +213,11 @@ export default function DashboardPage() {
             <tbody className="divide-y divide-slate-100">
               {recentEmployees.map((emp) => (
                 <tr key={emp.id} className="hover:bg-slate-50">
-                  <td className="px-6 py-4 font-medium text-slate-700">{emp.employeeCode}</td>
+                  <td className="px-6 py-4 font-medium text-slate-700">{emp.nik}</td>
                   <td className="px-6 py-4 text-slate-600">{emp.firstName} {emp.lastName}</td>
                   <td className="px-6 py-4 text-slate-600">{emp.departmentCode}</td>
                   <td className="px-6 py-4 text-slate-600">
-                    {new Date(emp.joinDate).toLocaleDateString('id-ID', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
+                    {formatDate(emp.joinDate)}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-block font-medium ${emp.status === "Active" ? "text-[#124D1C]" : "text-red-500"

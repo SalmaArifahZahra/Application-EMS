@@ -48,7 +48,7 @@ export function UserTable({ users, onRefresh }: UserTableProps) {
           <tbody>
             {users.map((u) => (
               <tr key={u.id} className="border-t">
-                <td className="px-4 py-3 text-sm">{u.employeeCode}</td>
+
                 <td className="px-4 py-3 text-sm">{u.username}</td>
                 <td className="px-4 py-3 text-sm">{u.email}</td>
                 <td className="px-4 py-3 text-sm uppercase text-xs">{u.role}</td>

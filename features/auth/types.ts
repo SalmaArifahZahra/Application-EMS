@@ -5,7 +5,6 @@ export type UserRole =
 
 export interface ApiUser {
   id: string;
-  employeeCode: string;
   username: string;
   email: string;
   password: string;
@@ -18,7 +17,6 @@ export interface ApiUser {
 
 export interface AuthUser {
   id: string;
-  employeeCode: string;
   username: string;
   email: string;
   image: string;

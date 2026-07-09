@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 
 import { ApiUser, UserRole } from "@/features/auth/types";
@@ -24,7 +25,6 @@ export function UserForm({
   onChangePassword,
 }: UserFormProps) {
   const [values, setValues] = useState<UserFormValues>({
-    employeeCode: initialValues?.employeeCode ?? "",
     username: initialValues?.username ?? "",
     email: initialValues?.email ?? "",
     password: initialValues?.password ?? "",
@@ -83,10 +83,6 @@ export function UserForm({
 
     const newErrors: typeof errors = {};
 
-    if (!values.employeeCode.trim()) {
-      newErrors.employeeCode = "Employee code is required";
-    }
-
     if (!values.username.trim()) {
       newErrors.username = "Username is required";
     }
@@ -110,13 +106,6 @@ export function UserForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid gap-5 md:grid-cols-2">
-        <FormInput
-          label="Employee Code"
-          value={values.employeeCode}
-          onChange={(v) => handleChange("employeeCode", v)}
-          error={errors.employeeCode}
-        />
-
         <FormInput
           label="Username"
           value={values.username}
@@ -145,8 +134,7 @@ export function UserForm({
             </button>
           </div>
 
-          <Input
-            type="password"
+          <PasswordInput
             value={values.password}
             onChange={(e) =>
               handleChange("password", e.target.value)

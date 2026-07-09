@@ -21,6 +21,7 @@ import { positionService } from "@/features/position/service/position-service";
 import { ConfirmDialog } from "@/components/feedback/confirm-dialog";
 import type { Position } from "@/features/position/types";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 
 export default function PositionsPage() {
@@ -160,10 +161,10 @@ export default function PositionsPage() {
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Department <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Status <ChevronsUpDown size={14} /></div>
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Description <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Description <ChevronsUpDown size={14} /></div>
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Status <ChevronsUpDown size={14} /></div>
                 </th>
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Created At <ChevronsUpDown size={14} /></div>
@@ -183,6 +184,7 @@ export default function PositionsPage() {
                   <td className="py-3 px-2 text-slate-600">{pos.name}</td>
                   <td className="py-3 px-2 text-slate-500">{pos.level}</td>
                   <td className="py-3 px-2 text-slate-500">{pos.departmentCode}</td>
+                  <td className="py-3 px-2 text-slate-500 truncate max-w-xs">{pos.description || "-"}</td>
                   <td className="py-3 px-2">
                     <span className={`inline-flex items-center justify-center px-3 py-1 text-xs font-semibold rounded-full ${
                       pos.isActive 
@@ -192,12 +194,11 @@ export default function PositionsPage() {
                       {pos.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
-                  <td className="py-3 px-2 text-slate-500 truncate max-w-xs">{pos.description || "-"}</td>
                   <td className="py-3 px-2 text-slate-500">
-                    {new Date(pos.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {formatDate(pos.createdAt)}
                   </td>
                   <td className="py-3 px-2 text-slate-500">
-                    {new Date(pos.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {formatDate(pos.updatedAt)}
                   </td>
                   <td className="py-3 px-2 text-center">
                     <DropdownMenu>

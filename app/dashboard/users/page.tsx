@@ -82,8 +82,7 @@ export default function UsersPage() {
     const keyword = search.toLowerCase();
     return (
       (u.email && u.email.toLowerCase().includes(keyword)) ||
-      (u.username && u.username.toLowerCase().includes(keyword)) ||
-      (u.employeeCode && u.employeeCode.toLowerCase().includes(keyword))
+      (u.username && u.username.toLowerCase().includes(keyword))
     );
   });
 
@@ -160,9 +159,7 @@ export default function UsersPage() {
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Email <ChevronsUpDown size={14} /></div>
                 </th>
-                <th className="py-4 px-2 text-left font-medium text-slate-400">
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Employee Code <ChevronsUpDown size={14} /></div>
-                </th>
+
                 <th className="py-4 px-2 text-left font-medium text-slate-400">
                   <div className="flex items-center gap-1 cursor-pointer hover:text-slate-600">Username <ChevronsUpDown size={14} /></div>
                 </th>
@@ -185,7 +182,7 @@ export default function UsersPage() {
                 <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
                   <td className="py-3 px-2 text-slate-800 font-semibold">{u.username}</td>
                   <td className="py-3 px-2 text-slate-600">{u.email}</td>
-                  <td className="py-3 px-2 text-slate-600 font-medium">{u.employeeCode || "-"}</td>
+
                   <td className="py-3 px-2 text-slate-600">{u.username}</td>
                   <td className="py-3 px-2 text-slate-400">••••••••</td>
                   <td className="py-3 px-2">

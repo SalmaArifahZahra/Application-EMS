@@ -8,109 +8,79 @@ export const API = {
   employees: `${EMPLOYEE_API}/employees`,
 };
 
-import { SEED_DATA } from "./mock-data";
 
-function getEntityName(url: string): string {
-  if (url.includes("/users")) return "users";
-  if (url.includes("/departments")) return "departments";
-  if (url.includes("/positions")) return "positions";
-  if (url.includes("/employees")) return "employees";
-  return "unknown";
-}
-
-async function delay() {
-  return new Promise((resolve) => setTimeout(resolve, 500));
-}
-
-function getLocalData<T>(entity: string): T[] {
-  if (typeof window === "undefined") return [];
-  const stored = localStorage.getItem(`ems_v3_${entity}`);
-  if (stored) {
-    return JSON.parse(stored) as T[];
-  }
-  const seed = SEED_DATA[entity] || [];
-  localStorage.setItem(`ems_v3_${entity}`, JSON.stringify(seed));
-  return seed as unknown as T[];
-}
-
-function saveLocalData<T>(entity: string, data: T[]) {
-  if (typeof window !== "undefined") {
-    localStorage.setItem(`ems_v3_${entity}`, JSON.stringify(data));
-  }
-}
-
-function generateId(): string {
-  return Math.random().toString(36).substring(2, 10);
-}
 
 export type CreatePayload<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
 
 export const apiClient = {
   get: async <T>(url: string): Promise<T> => {
-    await delay();
-    const entity = getEntityName(url);
-    const data = getLocalData<T & { id: string }>(entity);
-
-    const match = url.match(/\/([^\/]+)$/);
-    if (match && match[1] && !["users", "departments", "positions", "employees"].includes(match[1])) {
-      const id = match[1];
-      const item = data.find((d) => d.id === id);
-      if (!item) throw new Error("Not found");
-      return item as unknown as T;
+    let res = await fetch(url, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    
+    // Fallback for MockAPI quirk where it returns 404 for integer IDs
+    if (res.status === 404) {
+      const match = url.match(/(.*)\/([^\/]+)$/);
+      if (match) {
+        const baseUrl = match[1];
+        const id = match[2];
+        const baseRes = await fetch(baseUrl, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        if (baseRes.ok) {
+          const allData = await baseRes.json();
+          if (Array.isArray(allData)) {
+            const item = allData.find((item: any) => String(item.id) === String(id));
+            if (item) return item as unknown as T;
+          }
+        }
+      }
     }
 
-    return data as unknown as T;
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`GET ${url} failed: ${res.status} ${err}`);
+    }
+    return res.json();
   },
 
   post: async <T>(url: string, body: CreatePayload<T>): Promise<T> => {
-    await delay();
-    const entity = getEntityName(url);
-    const data = getLocalData<T>(entity);
-    const now = new Date().toISOString();
-    const newItem = {
-      ...body,
-      id: generateId(),
-      createdAt: now,
-      updatedAt: now,
-    } as unknown as T;
-    data.push(newItem);
-    saveLocalData(entity, data);
-    return newItem;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`POST ${url} failed: ${res.status} ${err}`);
+    }
+    return res.json();
   },
 
   put: async <T>(url: string, body: Partial<T>): Promise<T> => {
-    await delay();
-    const entity = getEntityName(url);
-    const data = getLocalData<T & { id: string }>(entity);
-
-    const match = url.match(/\/([^\/]+)$/);
-    if (!match || !match[1]) throw new Error("ID not provided");
-    const id = match[1];
-
-    const index = data.findIndex((d) => d.id === id);
-    if (index === -1) throw new Error("Not found");
-
-    const updatedItem = { ...data[index], ...body, updatedAt: new Date().toISOString() } as unknown as T & { id: string };
-    data[index] = updatedItem;
-    saveLocalData(entity, data);
-    return updatedItem as unknown as T;
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`PUT ${url} failed: ${res.status} ${err}`);
+    }
+    return res.json();
   },
 
   delete: async <T>(url: string): Promise<T> => {
-    await delay();
-    const entity = getEntityName(url);
-    const data = getLocalData<T & { id: string }>(entity);
-
-    const match = url.match(/\/([^\/]+)$/);
-    if (!match || !match[1]) throw new Error("ID not provided");
-    const id = match[1];
-
-    const index = data.findIndex((d) => d.id === id);
-    if (index === -1) throw new Error("Not found");
-
-    const deletedItem = data[index];
-    data.splice(index, 1);
-    saveLocalData(entity, data);
-    return deletedItem as unknown as T;
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`DELETE ${url} failed: ${res.status} ${err}`);
+    }
+    return res.json();
   },
 };

@@ -1,6 +1,5 @@
 export interface Employee {
   id: string;
-  employeeCode: string;
   nik: string;
   firstName: string;
   lastName: string;

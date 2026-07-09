@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -104,8 +105,7 @@ export function ChangePasswordDialog({
         <div className="space-y-4 py-2">
           <div className="space-y-2">
             <Label>Current Password</Label>
-            <Input
-              type="password"
+            <PasswordInput
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
             />
@@ -113,8 +113,7 @@ export function ChangePasswordDialog({
 
           <div className="space-y-2">
             <Label>New Password</Label>
-            <Input
-              type="password"
+            <PasswordInput
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
@@ -122,8 +121,7 @@ export function ChangePasswordDialog({
 
           <div className="space-y-2">
             <Label>Confirm Password</Label>
-            <Input
-              type="password"
+            <PasswordInput
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />

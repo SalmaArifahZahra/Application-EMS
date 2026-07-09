@@ -18,7 +18,6 @@ import { positionService } from "@/features/position/service/position-service";
 import { useForm as useRHForm } from "react-hook-form";
 
 const employeeFormSchema = z.object({
-  employeeCode: z.string().min(1, "Employee Code is required").regex(/^[A-Za-z0-9-]+$/, "Only letters, numbers, and hyphens are allowed"),
   nik: z.string()
     .length(16, "NIK must be exactly 16 digits")
     .regex(/^\d+$/, "NIK must contain only numbers"),
@@ -72,7 +71,6 @@ export function EmployeeForm({
   } = useRHForm<z.infer<typeof employeeFormSchema>>({
     resolver: zodResolver(employeeFormSchema) as any,
     defaultValues: {
-      employeeCode: initialValues?.employeeCode ?? "",
       nik: initialValues?.nik ?? "",
       firstName: initialValues?.firstName ?? "",
       lastName: initialValues?.lastName ?? "",
@@ -131,18 +129,6 @@ export function EmployeeForm({
   return (
     <form onSubmit={handleSubmit(submitForm as any)} className="space-y-6">
       <div className="grid gap-5 md:grid-cols-2">
-        <FormInput 
-          label="Employee Code" 
-          {...register("employeeCode", {
-            onChange: (e) => {
-              const val = e.target.value;
-              const filtered = val.replace(/[^A-Za-z0-9-]/g, '');
-              if (val !== filtered) toast.warning("Only letters, numbers, and hyphens allowed");
-              e.target.value = filtered;
-            }
-          })} 
-          error={errors.employeeCode?.message} 
-        />
         <FormInput 
           label="NIK" 
           {...register("nik", {

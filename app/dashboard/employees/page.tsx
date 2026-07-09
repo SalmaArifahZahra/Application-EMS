@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import Papa from "papaparse";
+import { formatDate } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/data-display/empty-state";
@@ -55,7 +56,6 @@ export default function EmployeePage() {
   let filteredEmployees = employees.filter((employee) => {
     const keyword = search.toLowerCase();
     const matchesSearch = (
-      employee.employeeCode.toLowerCase().includes(keyword) ||
       (employee.firstName + " " + employee.lastName).toLowerCase().includes(keyword) ||
       employee.email.toLowerCase().includes(keyword)
     );
@@ -233,10 +233,10 @@ export default function EmployeePage() {
                     </span>
                   </td>
                   <td className="py-3 px-2 text-slate-500">
-                    {new Date(emp.joinDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {formatDate(emp.joinDate)}
                   </td>
                   <td className="py-3 px-2 text-slate-500">
-                    {new Date(emp.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {formatDate(emp.updatedAt)}
                   </td>
                   <td className="py-3 px-2 text-center">
                     <DropdownMenu>

@@ -8,7 +8,6 @@ export function mapAuthUser(
 ): AuthUser {
   return {
     id: user.id,
-    employeeCode: user.employeeCode,
     username: user.username,
     email: user.email,
     image: user.image,

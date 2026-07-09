@@ -22,6 +22,7 @@ import { departmentService } from "@/features/department/services/department-ser
 import { ConfirmDialog } from "@/components/feedback/confirm-dialog";
 import type { Department } from "@/features/department/types";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { formatDate } from "@/lib/utils";
 
 export default function DepartmentsPage() {
   const router = useRouter();
@@ -189,10 +190,10 @@ export default function DepartmentsPage() {
                     </span>
                   </td>
                   <td className="py-3 px-2 text-slate-500">
-                    {new Date(dept.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {formatDate(dept.createdAt)}
                   </td>
                   <td className="py-3 px-2 text-slate-500">
-                    {new Date(dept.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {formatDate(dept.updatedAt)}
                   </td>
                   <td className="py-3 px-2 text-center">
                     <DropdownMenu>

@@ -68,7 +68,7 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
               )}
             </div>
             <DetailItem label="Full Name" value={`${employee.firstName} ${employee.lastName}`} />
-            <DetailItem label="Employee Code" value={employee.employeeCode} />
+            <DetailItem label="NIK" value={employee.nik} />
             <DetailItem label="Gender" value={employee.gender} />
             <DetailItem label="Birth Date" value={employee.birthDate} />
           </CardContent>
