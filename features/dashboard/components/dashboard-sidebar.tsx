@@ -3,24 +3,31 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { ROUTE_PERMISSIONS } from "@/features/auth/permission";
 import { DASHBOARD_MENU } from "../constants";
 import { useSidebar } from "../contexts/sidebar-context";
 import { X } from "lucide-react";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, hasPermission } = useAuth();
   const { isOpen, close } = useSidebar();
+
+  const hasAccessToMenu = (href: string) => {
+    const requiredPerms = ROUTE_PERMISSIONS[href];
+    if (!requiredPerms) return true; 
+    return requiredPerms.some((perm) => hasPermission(perm));
+  };
 
   const overviewMenus = DASHBOARD_MENU.filter(
     (menu) =>
-      menu.roles.includes(user?.role ?? "employee") &&
+      hasAccessToMenu(menu.href) &&
       ["/dashboard", "/dashboard/employees", "/dashboard/departments", "/dashboard/positions", "/dashboard/reports"].includes(menu.href)
   );
 
   const pengaturanMenus = DASHBOARD_MENU.filter(
     (menu) =>
-      menu.roles.includes(user?.role ?? "employee") &&
+      hasAccessToMenu(menu.href) &&
       ["/dashboard/users", "/dashboard/profile"].includes(menu.href)
   );
 

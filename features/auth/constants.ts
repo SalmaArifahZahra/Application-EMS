@@ -13,4 +13,5 @@ export const DASHBOARD_ROUTES: Record<UserRole, string> = {
   superadmin: "/dashboard",
   hrd: "/dashboard",
   employee: "/dashboard",
+  manager: "/dashboard",
 };
