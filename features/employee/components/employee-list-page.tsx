@@ -26,7 +26,7 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 
 export function EmployeePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, hasPermission } = useAuth();
 
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,14 @@ export function EmployeePage() {
     try {
       setLoading(true);
       const data = await employeeService.getAll();
-      setEmployees(data);
+      
+      if (hasPermission("employee.view")) {
+        setEmployees(data);
+      } else if (hasPermission("employee.view.self")) {
+        setEmployees(data.filter(emp => emp.email === user?.email));
+      } else {
+        setEmployees([]);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -149,9 +156,11 @@ export function EmployeePage() {
             <Upload size={16} /> Export
           </Button>
 
-          <Button onClick={() => router.push("/dashboard/employees/create")} className="bg-[#3B82F6] hover:bg-blue-600 text-white gap-2 rounded-lg px-4 shadow-sm">
-            <Plus size={16} /> Add New Employee
-          </Button>
+          {hasPermission("employee.create") && (
+            <Button onClick={() => router.push("/dashboard/employees/create")} className="bg-[#3B82F6] hover:bg-blue-600 text-white gap-2 rounded-lg px-4 shadow-sm">
+              <Plus size={16} /> Add New Employee
+            </Button>
+          )}
         </div>
       </div>
 
@@ -253,10 +262,12 @@ export function EmployeePage() {
                         <Link href={`/dashboard/employees/${emp.id}`} className="w-full">
                           <DropdownMenuItem className="cursor-pointer">View</DropdownMenuItem>
                         </Link>
-                        <Link href={`/dashboard/employees/edit/${emp.id}`} className="w-full">
-                          <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
-                        </Link>
-                        {user?.role === "superadmin" && (
+                        {hasPermission("employee.update") && (
+                          <Link href={`/dashboard/employees/edit/${emp.id}`} className="w-full">
+                            <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
+                          </Link>
+                        )}
+                        {hasPermission("employee.delete") && (
                           <div onClick={(e) => e.stopPropagation()}>
                             <DeleteEmployeeButton
                               id={emp.id}
