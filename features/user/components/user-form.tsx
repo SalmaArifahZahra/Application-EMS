@@ -23,12 +23,6 @@ const AVAILABLE_PERMISSIONS = [
     { label: "Update", value: "position.update" },
     { label: "Delete", value: "position.delete" },
   ]},
-  { module: "User", items: [
-    { label: "View", value: "user.view" },
-    { label: "Create", value: "user.create" },
-    { label: "Update", value: "user.update" },
-    { label: "Delete", value: "user.delete" },
-  ]},
   { module: "Report", items: [
     { label: "View", value: "report.view" }
   ]},

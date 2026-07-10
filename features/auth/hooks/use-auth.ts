@@ -22,7 +22,9 @@ export function useAuth() {
   );
 
   const hasPermission = (permission: string) => {
-    if (!user || !user.permissions) return false;
+    if (!user) return false;
+    if (user.role === "superadmin") return true;
+    if (!user.permissions) return false;
     return user.permissions.includes(permission);
   };
 

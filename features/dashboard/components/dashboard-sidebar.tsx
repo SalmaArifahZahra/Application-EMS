@@ -14,6 +14,8 @@ export function DashboardSidebar() {
   const { isOpen, close } = useSidebar();
 
   const hasAccessToMenu = (href: string) => {
+    if (href === "/dashboard/users") return user?.role === "superadmin";
+
     const requiredPerms = ROUTE_PERMISSIONS[href];
     if (!requiredPerms) return true; 
     return requiredPerms.some((perm) => hasPermission(perm));

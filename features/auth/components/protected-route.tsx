@@ -38,7 +38,11 @@ export function ProtectedRoute({
 
   for (const [route, requiredPerms] of Object.entries(ROUTE_PERMISSIONS)) {
     if (pathname === route || pathname.startsWith(`${route}/`)) {
-      allowed = requiredPerms.some((perm) => hasPermission(perm));
+      if (route === "/dashboard/users") {
+        allowed = user.role === "superadmin";
+      } else {
+        allowed = requiredPerms.some((perm) => hasPermission(perm));
+      }
       break;
     }
   }
