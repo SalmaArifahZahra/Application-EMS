@@ -34,6 +34,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 
 import { ApiUser, UserRole } from "@/features/auth/types";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 
 type UserFormValues = Omit<ApiUser, "id" | "createdAt" | "updatedAt">;
 
@@ -50,6 +51,9 @@ export function UserForm({
   onSubmit,
   onChangePassword,
 }: UserFormProps) {
+  const { user } = useAuth();
+  const isSuperadmin = user?.role === "superadmin";
+
   const [values, setValues] = useState<UserFormValues>({
     username: initialValues?.username ?? "",
     email: initialValues?.email ?? "",
@@ -186,8 +190,9 @@ export function UserForm({
           )}
         </div>
 
-        <div className="space-y-2">
-          <Label>Role</Label>
+        {isSuperadmin && (
+          <div className="space-y-2">
+            <Label>Role</Label>
 
           <select
             value={values.role}
@@ -216,6 +221,7 @@ export function UserForm({
             </option>
           </select>
         </div>
+        )}
 
         <div className="space-y-2">
           <Label>Status</Label>
@@ -263,9 +269,10 @@ export function UserForm({
         </div>
       </div>
 
-      <div className="space-y-4 pt-4 border-t">
-        <h3 className="text-lg font-semibold text-slate-800">Permissions</h3>
-        <p className="text-sm text-slate-500">
+      {isSuperadmin && (
+        <div className="space-y-4 pt-4 border-t">
+          <h3 className="text-lg font-semibold text-slate-800">Permissions</h3>
+          <p className="text-sm text-slate-500">
           Centang hak akses yang ingin diberikan pada user ini.
         </p>
         
@@ -293,6 +300,7 @@ export function UserForm({
           ))}
         </div>
       </div>
+      )}
 
       <div className="flex justify-end">
         <Button
