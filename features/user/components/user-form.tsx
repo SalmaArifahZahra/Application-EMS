@@ -2,6 +2,38 @@
 
 import { useState } from "react";
 
+const AVAILABLE_PERMISSIONS = [
+  { module: "Dashboard", items: [{ label: "View Dashboard", value: "dashboard.view" }] },
+  { module: "Employee", items: [
+    { label: "View All", value: "employee.view" },
+    { label: "View Self", value: "employee.view.self" },
+    { label: "Create", value: "employee.create" },
+    { label: "Update", value: "employee.update" },
+    { label: "Delete", value: "employee.delete" },
+  ]},
+  { module: "Department", items: [
+    { label: "View", value: "department.view" },
+    { label: "Create", value: "department.create" },
+    { label: "Update", value: "department.update" },
+    { label: "Delete", value: "department.delete" },
+  ]},
+  { module: "Position", items: [
+    { label: "View", value: "position.view" },
+    { label: "Create", value: "position.create" },
+    { label: "Update", value: "position.update" },
+    { label: "Delete", value: "position.delete" },
+  ]},
+  { module: "User", items: [
+    { label: "View", value: "user.view" },
+    { label: "Create", value: "user.create" },
+    { label: "Update", value: "user.update" },
+    { label: "Delete", value: "user.delete" },
+  ]},
+  { module: "Report", items: [
+    { label: "View", value: "report.view" }
+  ]},
+];
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -29,6 +61,7 @@ export function UserForm({
     email: initialValues?.email ?? "",
     password: initialValues?.password ?? "",
     role: initialValues?.role ?? "employee",
+    permissions: initialValues?.permissions ?? [],
     image: initialValues?.image ?? "",
     isActive: initialValues?.isActive ?? true,
   });
@@ -54,6 +87,17 @@ export function UserForm({
       ...prev,
       [key]: "",
     }));
+  }
+
+  function handlePermissionToggle(permission: string) {
+    setValues((prev) => {
+      const perms = prev.permissions || [];
+      if (perms.includes(permission)) {
+        return { ...prev, permissions: perms.filter((p) => p !== permission) };
+      } else {
+        return { ...prev, permissions: [...perms, permission] };
+      }
+    });
   }
 
   function handleImageChange(
@@ -169,6 +213,10 @@ export function UserForm({
               HRD
             </option>
 
+            <option value="manager">
+              Manager
+            </option>
+
             <option value="employee">
               Employee
             </option>
@@ -218,6 +266,37 @@ export function UserForm({
               />
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="space-y-4 pt-4 border-t">
+        <h3 className="text-lg font-semibold text-slate-800">Permissions</h3>
+        <p className="text-sm text-slate-500">
+          Centang hak akses yang ingin diberikan pada user ini.
+        </p>
+        
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {AVAILABLE_PERMISSIONS.map((group) => (
+            <div key={group.module} className="space-y-3 rounded-lg border p-4 bg-slate-50/50">
+              <h4 className="font-medium text-slate-800">{group.module}</h4>
+              <div className="space-y-2">
+                {group.items.map((perm) => {
+                  const isChecked = (values.permissions || []).includes(perm.value);
+                  return (
+                    <label key={perm.value} className="flex items-center space-x-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => handlePermissionToggle(perm.value)}
+                        className="h-4 w-4 rounded border-gray-300 text-[#0B1849] focus:ring-[#0B1849]"
+                      />
+                      <span className="text-sm text-slate-600">{perm.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

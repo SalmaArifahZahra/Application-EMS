@@ -21,6 +21,11 @@ export function useAuth() {
     (state) => state.setUser,
   );
 
+  const hasPermission = (permission: string) => {
+    if (!user || !user.permissions) return false;
+    return user.permissions.includes(permission);
+  };
+
   return {
     user,
 
@@ -31,5 +36,7 @@ export function useAuth() {
     logout,
 
     setUser,
+
+    hasPermission,
   };
 }

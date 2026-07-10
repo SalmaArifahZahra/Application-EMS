@@ -1,7 +1,8 @@
 export type UserRole =
   | "superadmin"
   | "hrd"
-  | "employee";
+  | "employee"
+  | "manager";
 
 export interface ApiUser {
   id: string;
@@ -9,6 +10,7 @@ export interface ApiUser {
   email: string;
   password: string;
   role: UserRole;
+  permissions: string[];
   image: string;
   isActive: boolean;
   createdAt: string;
@@ -21,6 +23,7 @@ export interface AuthUser {
   email: string;
   image: string;
   role: UserRole;
+  permissions: string[];
   fullName?: string;
 }
 

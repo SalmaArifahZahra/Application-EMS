@@ -12,5 +12,6 @@ export function mapAuthUser(
     email: user.email,
     image: user.image,
     role: user.role,
+    permissions: user.permissions || [],
   };
 }

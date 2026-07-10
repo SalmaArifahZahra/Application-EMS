@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useAuth } from "../hooks/use-auth";
-import { ROLE_PERMISSIONS } from "../permission";
+import { ROUTE_PERMISSIONS } from "../permission";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ export function ProtectedRoute({
   const pathname = usePathname();
   const router = useRouter();
 
-  const { user, hydrated } = useAuth();
+  const { user, hydrated, hasPermission } = useAuth();
 
   useEffect(() => {
     if (!hydrated) return;
@@ -34,15 +34,14 @@ export function ProtectedRoute({
     return null;
   }
 
-  const permissions = ROLE_PERMISSIONS[user.role];
+  let allowed = true;
 
-  const allowed = permissions.some((route) => {
-    if (route === "/dashboard") {
-      return pathname === "/dashboard";
+  for (const [route, requiredPerms] of Object.entries(ROUTE_PERMISSIONS)) {
+    if (pathname === route || pathname.startsWith(`${route}/`)) {
+      allowed = requiredPerms.some((perm) => hasPermission(perm));
+      break;
     }
-
-    return pathname === route || pathname.startsWith(`${route}/`);
-  });
+  }
 
   if (!allowed) {
     return (
